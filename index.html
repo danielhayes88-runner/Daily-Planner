@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Planner</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --blue-1: #93c5fd;
+      --blue-2: #60a5fa;
+      --blue-3: #3b82f6;
+      --blue-4: #2563eb;
+      --blue-5: #1d4ed8;
+      --green: #22c55e;
+      --text: #1a1a1a;
+      --text-2: #555;
+      --text-3: #999;
+      --border: #e0e0e0;
+      --border-2: #bbb;
+      --surface: #f5f5f5;
+      --card: #fff;
+      --bg: #f0f4f8;
+      --radius: 6px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text: #f0f0f0;
+        --text-2: #aaa;
+        --text-3: #666;
+        --border: #2a2a2a;
+        --border-2: #444;
+        --surface: #1a1a1a;
+        --card: #1e1e1e;
+        --bg: #111;
+      }
+    }
+
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 52px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav-brand {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      border: none;
+      background: none;
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--text-3);
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .nav-tab:hover { background: var(--surface); color: var(--text-2); }
+    .nav-tab.active { background: var(--surface); color: var(--text); font-weight: 500; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sync-status {
+      font-size: 11px;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sync-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-3);
+      flex-shrink: 0;
+    }
+
+    .sync-dot.ok { background: var(--green); }
+    .sync-dot.busy { background: #f59e0b; }
+    .sync-dot.err { background: #ef4444; }
+
+    .sign-btn {
+      padding: 5px 12px;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius);
+      background: transparent;
+      font-size: 12px;
+      font-family: var(--font);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .sign-btn:hover { background: var(--surface); }
+
+    /* ── PAGES ── */
+    .page { display: none; padding: 2rem 1rem; }
+    .page.active { display: block; }
+
+    /* ── PLANNER ── */
+    .planner {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .date-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .date-label {
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .date-input {
+      border: none;
+      border-bottom: 1.5px solid var(--border-2);
+      background: transparent;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      padding: 2px 4px;
+      outline: none;
+      font-family: var(--font);
+    }
+
+    .date-input:focus { border-bottom-color: var(--blue-3); }
+
+    .col-labels {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 0 0 4px;
+    }
+
+    .col-label {
+      font-size: 10px;
+      color: var(--text-3);
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+
+    .col-label.w-est { width: 113px; }
+    .col-label.w-act { width: 52px; }
+    .col-label.w-done { width: 24px; }
+
+    .section-block { margin-bottom: 1.5rem; }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--blue-4);
+      margin-bottom: 2px;
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 12px;
+    }
+
+    .task-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .task-row:last-child { border-bottom: none; }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .task-num {
+      font-size: 13px;
+      color: var(--text-3);
+      min-width: 18px;
+      flex-shrink: 0;
+    }
+
+    .task-input {
+      border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      flex: 1;
+      padding: 4px 0;
+      min-width: 0;
+      font-family: var(--font);
+      transition: color 0.2s;
+      width: 100%;
+    }
+
+    .task-input:focus { border-bottom-color: var(--blue-3); }
+    .task-input.done { color: var(--text-3); text-decoration: line-through; }
+
+    .task-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .seg-bar {
+      display: flex;
+      gap: 3px;
+    }
+
+    .seg {
+      width: 22px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1.5px solid var(--border-2);
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .seg.on { border-color: transparent; }
+    .seg[data-lvl="1"].on { background: var(--blue-1); }
+    .seg[data-lvl="2"].on { background: var(--blue-2); }
+    .seg[data-lvl="3"].on { background: var(--blue-3); }
+    .seg[data-lvl="4"].on { background: var(--blue-4); }
+    .seg[data-lvl="5"].on { background: var(--blue-5); }
+
+    .actual-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .actual-input {
+      width: 36px;
+      border: none;
+      border-bottom: 1.5px solid var(--border-2);
+      background: transparent;
+      font-size: 13px;
+      color: var(--text);
+      text-align: center;
+      outline: none;
+      padding: 2px 0;
+      font-family: var(--font);
+    }
+
+    .actual-input:focus { border-bottom-color: var(--blue-3); }
+
+    .actual-label {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .tick-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-2);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.12s, border-color 0.12s;
+      flex-shrink: 0;
+    }
+
+    .tick-btn:hover { border-color: var(--green); }
+    .tick-btn.done { background: var(--green); border-color: var(--green); }
+    .tick-btn .ck { display: none; }
+    .tick-btn.done .ck { display: block; }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    .notes-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .notes-area {
+      width: 100%;
+      border: none;
+      border-bottom: 0.5px solid var(--border);
+      background: transparent;
+      font-size: 13px;
+      color: var(--text);
+      font-family: var(--font);
+      resize: none;
+      outline: none;
+      line-height: 2;
+      padding: 0;
+      min-height: 80px;
+    }
+
+    .notes-area:focus { border-bottom-color: var(--blue-3); }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 0.5px solid var(--border);
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .mood-wrap, .rating-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mood-label, .rating-label {
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-right: 4px;
+    }
+
+    .mood-btn {
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: opacity 0.12s, transform 0.12s;
+      border: none;
+      background: none;
+      padding: 2px;
+      line-height: 1;
+    }
+
+    .mood-btn:hover { opacity: 0.65; }
+    .mood-btn.sel { opacity: 1; transform: scale(1.2); }
+
+    .rating-btn {
+      width: 28px;
+      height: 28px;
+      border: 0.5px solid var(--border-2);
+      border-radius: var(--radius);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .rating-btn:hover { background: var(--surface); }
+    .rating-btn.sel { background: var(--blue-3); color: #fff; border-color: var(--blue-3); }
+
+    .save-btn {
+      display: block;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 10px;
+      border: 0.5px solid var(--border-2);
+      border-radius: var(--radius);
+      background: transparent;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 0.12s;
+    }
+
+    .save-btn:hover { background: var(--surface); }
+
+    /* ── HISTORY ── */
+    .history-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .history-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .search-input {
+      padding: 7px 12px;
+      border: 1px solid var(--border-2);
+      border-radius: var(--radius);
+      background: var(--card);
+      font-size: 13px;
+      color: var(--text);
+      font-family: var(--font);
+      outline: none;
+      width: 200px;
+    }
+
+    .search-input:focus { border-color: var(--blue-3); }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .history-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: box-shadow 0.12s;
+      border: 1px solid transparent;
+    }
+
+    .history-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-color: var(--border);
+    }
+
+    .hc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .hc-date {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .hc-meta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hc-mood { font-size: 16px; }
+
+    .hc-rating {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue-4);
+      background: var(--surface);
+      padding: 2px 7px;
+      border-radius: 20px;
+    }
+
+    .hc-tasks {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .hc-tasks span {
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-3);
+      font-size: 14px;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--text);
+      color: var(--card);
+      font-size: 13px;
+      padding: 9px 16px;
+      border-radius: var(--radius);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 520px) {
+      .planner { padding: 1.25rem; border-radius: 10px; }
+      .nav-brand { font-size: 13px; }
+      .search-input { width: 150px; }
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      @page { size: A4; margin: 20mm 18mm; }
+      .nav, .save-btn, .toast { display: none !important; }
+      body { background: #fff !important; padding: 0; }
+      .page { display: block !important; padding: 0; }
+      #page-history { display: none !important; }
+      .planner { max-width: 100%; box-shadow: none; border-radius: 0; padding: 0; background: #fff !important; }
+      .seg.on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .tick-btn.done { background: #22c55e !important; border-color: #22c55e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .tick-btn.done .ck { display: block !important; }
+      .section-title { color: #2563eb !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-brand">Planner</span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="today" onclick="switchTab('today')">Today</button>
+    <button class="nav-tab" data-tab="history" onclick="switchTab('history')">History</button>
+  </div>
+  <div class="nav-right">
+    <div class="sync-status" id="syncStatus">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">Local only</span>
+    </div>
+    <button class="sign-btn" id="signBtn" onclick="handleAuth()">Sign in with Google</button>
+  </div>
+</nav>
+
+<!-- TODAY TAB -->
+<div class="page active" id="page-today">
+  <div class="planner">
+    <div class="date-bar">
+      <span class="date-label">Date</span>
+      <input class="date-input" type="date" id="dateInput" />
+    </div>
+
+    <div class="col-labels">
+      <span class="col-label w-est">Estimated time</span>
+      <span class="col-label w-act">Actual (h)</span>
+      <span class="col-label w-done"></span>
+    </div>
+
+    <div class="section-block">
+      <p class="section-title">Most important task</p>
+      <p class="section-sub">If this was the only thing you finished today, you'd be satisfied.</p>
+      <div id="mit-tasks"></div>
+    </div>
+
+    <div class="section-block">
+      <p class="section-title">Secondary tasks</p>
+      <p class="section-sub">Finishing these makes the day even better.</p>
+      <div id="sec-tasks"></div>
+    </div>
+
+    <div class="section-block">
+      <p class="section-title">Additional tasks</p>
+      <p class="section-sub">Only after everything above is done.</p>
+      <div id="add-tasks"></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="notes-block">
+      <div class="notes-label">Notes</div>
+      <textarea class="notes-area" id="notesArea" placeholder="Reflections, blockers, ideas…" rows="4"></textarea>
+    </div>
+
+    <div class="footer-row">
+      <div class="mood-wrap">
+        <span class="mood-label">Mood</span>
+        <button class="mood-btn" data-mood="😞" title="Awful">😞</button>
+        <button class="mood-btn" data-mood="😕" title="Bad">😕</button>
+        <button class="mood-btn" data-mood="😐" title="Okay">😐</button>
+        <button class="mood-btn" data-mood="🙂" title="Good">🙂</button>
+        <button class="mood-btn" data-mood="😄" title="Great">😄</button>
+      </div>
+      <div class="rating-wrap">
+        <span class="rating-label">Rate your day</span>
+        <button class="rating-btn" data-val="1">1</button>
+        <button class="rating-btn" data-val="2">2</button>
+        <button class="rating-btn" data-val="3">3</button>
+        <button class="rating-btn" data-val="4">4</button>
+        <button class="rating-btn" data-val="5">5</button>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="savePDF()">Save as PDF</button>
+  </div>
+</div>
+
+<!-- HISTORY TAB -->
+<div class="page" id="page-history">
+  <div class="history-wrap">
+    <div class="history-header">
+      <span class="history-title">Past planners</span>
+      <input class="search-input" type="search" placeholder="Search tasks or notes…" id="searchInput" oninput="renderHistory()" />
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIG — replace with your Google Client ID
+// ─────────────────────────────────────────────
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID_HERE';
+const DRIVE_FILE_NAME  = 'planner-data.json';
+const SCOPES           = 'https://www.googleapis.com/auth/drive.appdata';
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let allData   = {};   // { "2025-06-28": { tasks, notes, mood, rating } }
+let driveFileId = null;
+let tokenClient = null;
+let accessToken = null;
+let saveTimer   = null;
+let isDriveReady = false;
+
+// ─────────────────────────────────────────────
+// TASK CONFIG
+// ─────────────────────────────────────────────
+const SECTIONS = [
+  { id: 'mit-tasks', nums: [1],    key: 'mit' },
+  { id: 'sec-tasks', nums: [2,3],  key: 'sec' },
+  { id: 'add-tasks', nums: [4,5],  key: 'add' },
+];
+
+// ─────────────────────────────────────────────
+// DOM HELPERS
+// ─────────────────────────────────────────────
+function $(id) { return document.getElementById(id); }
+
+function toast(msg, dur = 2000) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// ─────────────────────────────────────────────
+// TAB SWITCHING
+// ─────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  $('page-' + tab).classList.add('active');
+  if (tab === 'history') renderHistory();
+}
+
+// ─────────────────────────────────────────────
+// BUILD TASK ROWS
+// ─────────────────────────────────────────────
+function makeTaskRow(num, data = {}) {
+  const row = document.createElement('div');
+  row.className = 'task-row';
+  row.dataset.num = num;
+
+  // Left: number + text input
+  const left = document.createElement('div');
+  left.className = 'task-left';
+
+  const numEl = document.createElement('span');
+  numEl.className = 'task-num';
+  numEl.textContent = num + '.';
+
+  const input = document.createElement('input');
+  input.className = 'task-input' + (data.done ? ' done' : '');
+  input.type = 'text';
+  input.placeholder = 'Enter task…';
+  input.value = data.text || '';
+  input.addEventListener('input', scheduleSave);
+  left.append(numEl, input);
+
+  // Right: seg bar + actual + tick
+  const controls = document.createElement('div');
+  controls.className = 'task-controls';
+
+  // Seg bar
+  const bar = document.createElement('div');
+  bar.className = 'seg-bar';
+  let level = data.est || 0;
+
+  for (let i = 1; i <= 5; i++) {
+    const seg = document.createElement('button');
+    seg.className = 'seg' + (i <= level ? ' on' : '');
+    seg.dataset.lvl = i;
+    seg.setAttribute('aria-label', (i * 30) + ' min');
+    seg.addEventListener('click', () => {
+      level = (level === i) ? 0 : i;
+      bar.querySelectorAll('.seg').forEach(s =>
+        s.classList.toggle('on', +s.dataset.lvl <= level)
+      );
+      scheduleSave();
+    });
+    bar.appendChild(seg);
+  }
+
+  // Actual hours
+  const actWrap = document.createElement('div');
+  actWrap.className = 'actual-wrap';
+  const actInput = document.createElement('input');
+  actInput.className = 'actual-input';
+  actInput.type = 'number';
+  actInput.min = 0; actInput.max = 24; actInput.step = 0.5;
+  actInput.placeholder = '—';
+  actInput.value = data.actual != null ? data.actual : '';
+  actInput.addEventListener('input', scheduleSave);
+  const actLabel = document.createElement('span');
+  actLabel.className = 'actual-label';
+  actLabel.textContent = 'h';
+  actWrap.append(actInput, actLabel);
+
+  // Tick
+  const tick = document.createElement('button');
+  tick.className = 'tick-btn' + (data.done ? ' done' : '');
+  tick.innerHTML = `<svg class="ck" width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <polyline points="2,6 5,9 10,3" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+  tick.addEventListener('click', () => {
+    const done = tick.classList.toggle('done');
+    input.classList.toggle('done', done);
+    scheduleSave();
+  });
+
+  controls.append(bar, actWrap, tick);
+  row.append(left, controls);
+  return row;
+}
+
+function buildTasks(dayData) {
+  SECTIONS.forEach(sec => {
+    const container = $(sec.id);
+    container.innerHTML = '';
+    sec.nums.forEach((n, i) => {
+      const taskData = (dayData?.tasks?.[sec.key] || [])[i] || {};
+      container.appendChild(makeTaskRow(n, taskData));
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// READ / WRITE STATE
+// ─────────────────────────────────────────────
+function getDateKey() { return $('dateInput').value; }
+
+function readPlanner() {
+  const tasks = {};
+  SECTIONS.forEach(sec => {
+    tasks[sec.key] = sec.nums.map((n, i) => {
+      const row = $(sec.id).children[i];
+      const input  = row.querySelector('.task-input');
+      const bar    = row.querySelector('.seg-bar');
+      const act    = row.querySelector('.actual-input');
+      const tick   = row.querySelector('.tick-btn');
+      const level  = [...bar.querySelectorAll('.seg')].filter(s => s.classList.contains('on')).length;
+      return {
+        text:   input.value,
+        est:    level,
+        actual: act.value !== '' ? parseFloat(act.value) : null,
+        done:   tick.classList.contains('done'),
+      };
+    });
+  });
+
+  const mood    = document.querySelector('.mood-btn.sel')?.dataset.mood || null;
+  const ratingEl = document.querySelector('.rating-btn.sel');
+  const rating  = ratingEl ? parseInt(ratingEl.dataset.val) : null;
+  const notes   = $('notesArea').value;
+
+  return { tasks, mood, rating, notes, updated: Date.now() };
+}
+
+function loadIntoPlanner(dayData) {
+  buildTasks(dayData);
+  $('notesArea').value = dayData?.notes || '';
+
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.toggle('sel', b.dataset.mood === dayData?.mood);
+  });
+  document.querySelectorAll('.rating-btn').forEach(b => {
+    b.classList.toggle('sel', +b.dataset.val === dayData?.rating);
+  });
+}
+
+// ─────────────────────────────────────────────
+// AUTOSAVE
+// ─────────────────────────────────────────────
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(doSave, 800);
+}
+
+async function doSave() {
+  const key = getDateKey();
+  if (!key) return;
+  allData[key] = readPlanner();
+  saveLocal();
+  setSyncStatus('busy', 'Saving…');
+  if (isDriveReady) {
+    try {
+      await saveToDrive();
+      setSyncStatus('ok', 'Synced');
+    } catch (e) {
+      setSyncStatus('err', 'Sync failed');
+    }
+  } else {
+    setSyncStatus('', 'Local only');
+  }
+}
+
+// ─────────────────────────────────────────────
+// LOCAL STORAGE
+// ─────────────────────────────────────────────
+const LS_KEY = 'planner_data_v1';
+
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(allData)); } catch(e) {}
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) allData = JSON.parse(raw);
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// SYNC STATUS UI
+// ─────────────────────────────────────────────
+function setSyncStatus(state, label) {
+  const dot = $('syncDot');
+  dot.className = 'sync-dot' + (state ? ' ' + state : '');
+  $('syncLabel').textContent = label;
+}
+
+// ─────────────────────────────────────────────
+// GOOGLE DRIVE
+// ─────────────────────────────────────────────
+function loadGoogleScript() {
+  return new Promise(resolve => {
+    if (window.google?.accounts) return resolve();
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = resolve;
+    document.head.appendChild(s);
+  });
+}
+
+async function handleAuth() {
+  if (accessToken) {
+    // Sign out
+    google.accounts.oauth2.revoke(accessToken, () => {});
+    accessToken = null;
+    isDriveReady = false;
+    $('signBtn').textContent = 'Sign in with Google';
+    setSyncStatus('', 'Local only');
+    return;
+  }
+
+  if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+    alert('Google sync is not configured yet.\n\nSee the setup guide — you need to add your Google Client ID to the top of the script section in index.html.');
+    return;
+  }
+
+  await loadGoogleScript();
+
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) { setSyncStatus('err', 'Auth failed'); return; }
+      accessToken = resp.access_token;
+      isDriveReady = true;
+      $('signBtn').textContent = 'Sign out';
+      setSyncStatus('busy', 'Connecting…');
+      await syncFromDrive();
+    }
+  });
+
+  tokenClient.requestAccessToken();
+}
+
+async function driveRequest(method, path, body, params) {
+  const url = new URL('https://www.googleapis.com' + path);
+  if (params) Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
+  const res = await fetch(url, {
+    method,
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      ...(body ? { 'Content-Type': 'application/json' } : {})
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) throw new Error('Drive API error ' + res.status);
+  return res.json();
+}
+
+async function findDriveFile() {
+  const data = await driveRequest('GET', '/drive/v3/files', null, {
+    spaces: 'appDataFolder',
+    fields: 'files(id,name)',
+    q: `name='${DRIVE_FILE_NAME}'`
+  });
+  return data.files?.[0]?.id || null;
+}
+
+async function readDriveFile(fileId) {
+  const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
+  const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + accessToken } });
+  if (!res.ok) throw new Error('Read failed');
+  return res.json();
+}
+
+async function saveToDrive() {
+  const content = JSON.stringify(allData);
+  const blob = new Blob([content], { type: 'application/json' });
+
+  if (driveFileId) {
+    // Update
+    const url = `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`;
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+      body: content
+    });
+    if (!res.ok) throw new Error('Update failed');
+  } else {
+    // Create
+    const meta = { name: DRIVE_FILE_NAME, parents: ['appDataFolder'] };
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+    form.append('file', blob);
+    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + accessToken },
+      body: form
+    });
+    if (!res.ok) throw new Error('Create failed');
+    const data = await res.json();
+    driveFileId = data.id;
+  }
+}
+
+async function syncFromDrive() {
+  try {
+    driveFileId = await findDriveFile();
+    if (driveFileId) {
+      const driveData = await readDriveFile(driveFileId);
+      // Merge: Drive wins for any day that exists there
+      allData = Object.assign({}, allData, driveData);
+      saveLocal();
+      // Reload today's view
+      const key = getDateKey();
+      loadIntoPlanner(allData[key]);
+      setSyncStatus('ok', 'Synced');
+      toast('Synced from Google Drive');
+    } else {
+      // No file yet — push local data
+      await saveToDrive();
+      setSyncStatus('ok', 'Synced');
+      toast('Data saved to Google Drive');
+    }
+  } catch(e) {
+    setSyncStatus('err', 'Sync failed');
+    toast('Could not sync with Drive');
+  }
+}
+
+// ─────────────────────────────────────────────
+// DATE CHANGE
+// ─────────────────────────────────────────────
+function onDateChange() {
+  const key = getDateKey();
+  loadIntoPlanner(allData[key] || {});
+}
+
+// ─────────────────────────────────────────────
+// HISTORY
+// ─────────────────────────────────────────────
+function renderHistory() {
+  const q = $('searchInput').value.toLowerCase().trim();
+  const list = $('historyList');
+  list.innerHTML = '';
+
+  const keys = Object.keys(allData)
+    .filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k))
+    .sort((a, b) => b.localeCompare(a));
+
+  const matches = keys.filter(k => {
+    if (!q) return true;
+    const d = allData[k];
+    const texts = [
+      d.notes || '',
+      ...Object.values(d.tasks || {}).flat().map(t => t.text || '')
+    ].join(' ').toLowerCase();
+    return texts.includes(q);
+  });
+
+  if (!matches.length) {
+    list.innerHTML = `<div class="empty-state">${q ? 'No results for "' + q + '"' : 'No past planners yet.'}</div>`;
+    return;
+  }
+
+  matches.forEach(k => {
+    const d = allData[k];
+    const allTasks = Object.values(d.tasks || {}).flat();
+    const total = allTasks.length;
+    const done  = allTasks.filter(t => t.done).length;
+
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.onclick = () => {
+      $('dateInput').value = k;
+      loadIntoPlanner(d);
+      switchTab('today');
+    };
+
+    const dateLabel = new Date(k + 'T00:00:00').toLocaleDateString('en-GB', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    card.innerHTML = `
+      <div class="hc-top">
+        <span class="hc-date">${dateLabel}</span>
+        <div class="hc-meta">
+          ${d.mood ? `<span class="hc-mood">${d.mood}</span>` : ''}
+          ${d.rating ? `<span class="hc-rating">${d.rating}/5</span>` : ''}
+        </div>
+      </div>
+      <div class="hc-tasks">
+        <span>${done}</span> of ${total} tasks completed
+        ${d.notes ? ' · ' + d.notes.slice(0, 60) + (d.notes.length > 60 ? '…' : '') : ''}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ─────────────────────────────────────────────
+// PDF / PRINT
+// ─────────────────────────────────────────────
+function savePDF() {
+  const date = getDateKey();
+  const label = date
+    ? new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    : 'planner';
+  document.title = 'Planner ' + label;
+  window.print();
+  document.title = 'Daily Planner';
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+function init() {
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  $('dateInput').value = today;
+  $('dateInput').addEventListener('change', onDateChange);
+
+  // Load from localStorage
+  loadLocal();
+  loadIntoPlanner(allData[today] || {});
+
+  // Wire up mood buttons
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+      scheduleSave();
+    });
+  });
+
+  // Wire up rating buttons
+  document.querySelectorAll('.rating-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('sel'));
+      btn.classList.add('sel');
+      scheduleSave();
+    });
+  });
+
+  // Wire up notes
+  $('notesArea').addEventListener('input', scheduleSave);
+
+  // Save before tab close
+  window.addEventListener('beforeunload', () => {
+    const key = getDateKey();
+    if (key) { allData[key] = readPlanner(); saveLocal(); }
+  });
+}
+
+init();
+</script>
+</body>
+</html>
