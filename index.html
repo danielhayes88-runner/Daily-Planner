@@ -43,8 +43,7 @@
       padding: 2rem 1rem;
     }
 
-    /* ── shared card ── */
-    .card {
+    .planner {
       max-width: 680px;
       margin: 0 auto;
       padding: 2rem;
@@ -54,39 +53,8 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      .card { background: #1e1e1e; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+      .planner { background: #1e1e1e; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
     }
-
-    /* ── nav link bar (top of each view) ── */
-    .top-nav {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 0.5px solid var(--border);
-    }
-
-    .nav-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      color: var(--text-muted);
-      text-decoration: none;
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius);
-      padding: 4px 10px;
-      transition: color 0.12s, border-color 0.12s;
-      cursor: pointer;
-      background: none;
-    }
-
-    .nav-link:hover { color: var(--text-primary); border-color: var(--border-strong); }
-
-    /* ── planner ── */
-    #view-planner { display: block; }
-    #view-longlist { display: none; }
 
     .date-bar {
       display: flex;
@@ -132,8 +100,8 @@
     }
 
     .col-label.sessions-lbl { width: 113px; }
-    .col-label.actual-lbl  { width: 52px; }
-    .col-label.done-lbl    { width: 24px; }
+    .col-label.actual-lbl { width: 52px; }
+    .col-label.done-lbl { width: 24px; }
 
     .section-block { margin-bottom: 1.5rem; }
 
@@ -184,13 +152,13 @@
       flex: 1;
       padding: 4px 0;
       border-bottom: 1px solid var(--border);
-      width: 100%;
+      width: 260px;
       font-family: var(--font-sans);
       transition: color 0.2s;
     }
 
     .task-input:focus { border-bottom-color: var(--border-accent); }
-    .task-input.done  { color: var(--text-muted); text-decoration: line-through; }
+    .task-input.done { color: var(--text-muted); text-decoration: line-through; }
 
     .task-controls {
       display: flex;
@@ -243,7 +211,10 @@
 
     .actual-input:focus { border-bottom-color: var(--border-accent); }
 
-    .actual-label { font-size: 11px; color: var(--text-muted); }
+    .actual-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
     .tick-btn {
       width: 24px;
@@ -261,11 +232,15 @@
     }
 
     .tick-btn:hover { border-color: var(--border-success); }
-    .tick-btn.done  { background: var(--fill-success); border-color: var(--fill-success); }
+    .tick-btn.done { background: var(--fill-success); border-color: var(--fill-success); }
     .tick-btn .checkmark { display: none; }
     .tick-btn.done .checkmark { display: block; }
 
-    .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+    .divider {
+      border: none;
+      border-top: 0.5px solid var(--border);
+      margin: 1.5rem 0;
+    }
 
     .notes-block { margin-bottom: 1.5rem; }
 
@@ -374,270 +349,50 @@
 
     .save-btn:hover { background: var(--surface-1); }
 
-    /* ── long list ── */
-    .ll-header { margin-bottom: 1.5rem; }
-    .ll-title { font-size: 22px; font-weight: 500; color: var(--text-primary); margin: 0 0 4px; }
-    .ll-sub   { font-size: 13px; color: var(--text-muted); }
-
-    .ll-add-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 1.25rem;
-      border-bottom: 0.5px solid var(--border-strong);
-      margin-bottom: 1rem;
+    @media (max-width: 520px) {
+      .planner { padding: 1.25rem; }
+      .task-input { width: 140px; }
+      .footer-row { flex-direction: column; align-items: flex-start; }
     }
 
-    .ll-add-icon { font-size: 16px; color: var(--text-muted); }
+    .btn-row { display: none; }
 
-    .ll-add-input {
-      flex: 1;
-      border: none;
-      border-bottom: 1.5px solid var(--border-strong);
-      background: transparent;
-      font-size: 14px;
-      color: var(--text-primary);
-      padding: 5px 2px;
-      outline: none;
-      font-family: var(--font-sans);
-    }
+    .task-input { width: 100%; }
 
-    .ll-add-input:focus { border-bottom-color: var(--border-accent); }
-    .ll-add-hint { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
-
-    .ll-count-label {
-      font-size: 11px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .ll-list { list-style: none; }
-
-    .ll-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 0;
-      border-bottom: 0.5px solid var(--border);
-      cursor: default;
-    }
-
-    .ll-item:last-child { border-bottom: none; }
-    .ll-item.dragging { opacity: 0.4; }
-    .ll-item.drag-over { border-top: 2px solid var(--border-accent); }
-
-    .ll-drag {
-      color: var(--text-muted);
-      font-size: 15px;
-      cursor: grab;
-      flex-shrink: 0;
-      user-select: none;
-      padding: 2px 0;
-    }
-
-    .ll-drag:active { cursor: grabbing; }
-
-    .ll-text {
-      flex: 1;
-      font-size: 14px;
-      color: var(--text-primary);
-      outline: none;
-      border: none;
-      background: transparent;
-      font-family: var(--font-sans);
-      padding: 2px 0;
-      border-bottom: 1px solid transparent;
-    }
-
-    .ll-text:focus { border-bottom-color: var(--border-accent); }
-    .ll-text.done { color: var(--text-muted); text-decoration: line-through; }
-
-    .ll-pull-btn {
-      font-size: 11px;
-      color: var(--fill-accent);
-      border: 0.5px solid var(--border-accent);
-      border-radius: var(--radius);
-      padding: 3px 8px;
-      background: transparent;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: var(--font-sans);
-      transition: background 0.12s;
-      flex-shrink: 0;
-    }
-
-    .ll-pull-btn:hover { background: #eff6ff; }
-
-    @media (prefers-color-scheme: dark) {
-      .ll-pull-btn:hover { background: #1e3a5f; }
-    }
-
-    .ll-tick {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border-strong);
-      background: transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      flex-shrink: 0;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .ll-tick:hover { border-color: var(--border-success); }
-    .ll-tick.done  { background: var(--fill-success); border-color: var(--fill-success); }
-    .ll-tick .checkmark { display: none; }
-    .ll-tick.done .checkmark { display: block; }
-
-    .ll-toggle-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 0.5px solid var(--border);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .ll-toggle-arrow { font-size: 12px; color: var(--text-muted); transition: transform 0.15s; }
-    .ll-toggle-arrow.open { transform: rotate(90deg); }
-    .ll-toggle-label { font-size: 13px; color: var(--text-muted); }
-    .ll-done-badge {
-      font-size: 11px;
-      background: var(--surface-1);
-      border: 0.5px solid var(--border);
-      border-radius: 20px;
-      padding: 2px 8px;
-      color: var(--text-muted);
-    }
-
-    .ll-done-section { display: none; margin-top: 8px; }
-    .ll-done-section.open { display: block; }
-
-    .ll-empty {
-      font-size: 13px;
-      color: var(--text-muted);
-      padding: 1.5rem 0;
-      text-align: center;
-    }
-
-    /* ── slot-picker modal ── */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-backdrop.open { display: flex; }
-
-    .modal {
-      background: #fff;
-      border-radius: 12px;
-      padding: 1.5rem;
-      width: 320px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .modal { background: #1e1e1e; }
-    }
-
-    .modal-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .modal-task-preview {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 1.25rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .modal-slot-btn {
-      display: block;
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      border: 0.5px solid var(--border-strong);
-      border-radius: var(--radius);
-      background: transparent;
-      font-size: 13px;
-      color: var(--text-primary);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: background 0.12s, border-color 0.12s;
-    }
-
-    .modal-slot-btn:hover { background: var(--surface-1); border-color: var(--border-accent); }
-    .modal-slot-btn:last-of-type { margin-bottom: 0; }
-
-    .modal-slot-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: #2563eb;
-      font-weight: 500;
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .modal-slot-name { font-size: 13px; color: var(--text-primary); }
-    .modal-slot-taken { font-size: 11px; color: var(--text-muted); font-style: italic; }
-
-    .modal-cancel {
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      padding: 8px;
-      border: none;
-      background: transparent;
-      font-size: 13px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-family: var(--font-sans);
-    }
-
-    .modal-cancel:hover { color: var(--text-primary); }
-
-    /* ── sync status ── */
-    .sync-status {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-left: auto;
-    }
-
-    /* ── print ── */
     @media print {
-      @page { size: A4; margin: 20mm 18mm; }
+      @page {
+        size: A4;
+        margin: 20mm 18mm;
+      }
 
-      body { padding: 0; background: #fff !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body {
+        padding: 0;
+        background: #fff !important;
+        color: #1a1a1a !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
 
-      .card { max-width: 100%; box-shadow: none; border-radius: 0; padding: 0; background: #fff !important; }
+      .planner {
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        background: #fff !important;
+      }
 
-      .save-btn, .top-nav, #view-longlist, .modal-backdrop { display: none !important; }
+      .save-btn { display: none; }
 
       .task-input { width: 100%; }
 
       .seg.on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-      .tick-btn.done { background: #22c55e !important; border-color: #22c55e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .tick-btn.done {
+        background: #22c55e !important;
+        border-color: #22c55e !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
 
       .tick-btn.done .checkmark { display: block !important; }
 
@@ -645,28 +400,10 @@
 
       textarea { border: none; resize: none; }
     }
-
-    @media (max-width: 520px) {
-      .card { padding: 1.25rem; }
-      .footer-row { flex-direction: column; align-items: flex-start; }
-      .ll-pull-btn { display: none; }
-    }
   </style>
 </head>
 <body>
-
-  <!-- ═══════════════════════════════════════════════
-       VIEW: PLANNER
-  ═══════════════════════════════════════════════ -->
-  <div id="view-planner" class="card">
-
-    <div class="top-nav">
-      <button class="nav-link" onclick="showView('longlist')" aria-label="Go to long list">
-        ☰ Long list
-      </button>
-      <span class="sync-status" id="planner-sync-status"></span>
-    </div>
-
+  <div class="planner">
     <div class="date-bar">
       <span class="date-label">Date</span>
       <input class="date-input" type="date" id="dateInput" />
@@ -700,235 +437,79 @@
 
     <div class="notes-block">
       <div class="notes-label">Notes</div>
-      <textarea class="notes-area" id="notesArea" placeholder="Reflections, ideas, blockers…" rows="5"></textarea>
+      <textarea class="notes-area" placeholder="Reflections, ideas, blockers…" rows="5"></textarea>
     </div>
 
     <div class="footer-row">
       <div class="mood-wrap">
         <span class="mood-label">Mood</span>
-        <button class="mood-btn" data-mood="1" title="Awful">😞</button>
-        <button class="mood-btn" data-mood="2" title="Bad">😕</button>
-        <button class="mood-btn" data-mood="3" title="Okay">😐</button>
-        <button class="mood-btn" data-mood="4" title="Good">🙂</button>
-        <button class="mood-btn" data-mood="5" title="Great">😄</button>
+        <button class="mood-btn" title="Awful">😞</button>
+        <button class="mood-btn" title="Bad">😕</button>
+        <button class="mood-btn" title="Okay">😐</button>
+        <button class="mood-btn" title="Good">🙂</button>
+        <button class="mood-btn" title="Great">😄</button>
       </div>
       <div class="rating-wrap">
         <span class="rating-label">Rate your day</span>
-        <button class="rating-btn" data-rating="1">1</button>
-        <button class="rating-btn" data-rating="2">2</button>
-        <button class="rating-btn" data-rating="3">3</button>
-        <button class="rating-btn" data-rating="4">4</button>
-        <button class="rating-btn" data-rating="5">5</button>
+        <button class="rating-btn">1</button>
+        <button class="rating-btn">2</button>
+        <button class="rating-btn">3</button>
+        <button class="rating-btn">4</button>
+        <button class="rating-btn">5</button>
       </div>
     </div>
 
     <button class="save-btn" onclick="savePDF()">Save planner</button>
   </div>
 
-
-  <!-- ═══════════════════════════════════════════════
-       VIEW: LONG LIST
-  ═══════════════════════════════════════════════ -->
-  <div id="view-longlist" class="card">
-
-    <div class="top-nav">
-      <button class="nav-link" onclick="showView('planner')" aria-label="Back to today's planner">
-        ← Today's planner
-      </button>
-      <span class="sync-status" id="ll-sync-status"></span>
-    </div>
-
-    <div class="ll-header">
-      <p class="ll-title">Long list</p>
-      <p class="ll-sub">Your running backlog. Drag to prioritise, or pull items into today's planner.</p>
-    </div>
-
-    <div class="ll-add-row">
-      <span class="ll-add-icon" aria-hidden="true">+</span>
-      <input class="ll-add-input" id="llAddInput" type="text" placeholder="Add an action and press Enter" aria-label="New action" />
-      <span class="ll-add-hint">↵ to add</span>
-    </div>
-
-    <p class="ll-count-label" id="llCountLabel">To do</p>
-    <ul class="ll-list" id="llList" aria-label="Actions to do"></ul>
-    <p class="ll-empty" id="llEmpty" style="display:none">Nothing here yet — add an action above.</p>
-
-    <div class="ll-toggle-row" id="llToggleRow" style="display:none" role="button" tabindex="0" aria-expanded="false" onclick="toggleDone()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleDone()">
-      <span class="ll-toggle-arrow" id="llToggleArrow">▶</span>
-      <span class="ll-toggle-label">Show completed</span>
-      <span class="ll-done-badge" id="llDoneBadge">0 done</span>
-    </div>
-
-    <div class="ll-done-section" id="llDoneSection" aria-label="Completed actions">
-      <ul class="ll-list" id="llDoneList"></ul>
-    </div>
-  </div>
-
-
-  <!-- ═══════════════════════════════════════════════
-       SLOT PICKER MODAL
-  ═══════════════════════════════════════════════ -->
-  <div class="modal-backdrop" id="slotModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal">
-      <p class="modal-title" id="modalTitle">Add to today's planner</p>
-      <p class="modal-task-preview" id="modalPreview"></p>
-      <div id="modalSlots"></div>
-      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-    </div>
-  </div>
-
-
   <script>
-    /* ═══════════════════════════════════════════
-       CONFIG — fill these in
-    ═══════════════════════════════════════════ */
-    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
-    const ALLOWED_EMAIL    = 'YOUR_EMAIL@gmail.com';
-
-    /* ═══════════════════════════════════════════
-       CONSTANTS
-    ═══════════════════════════════════════════ */
-    const PLANNER_LS_KEY  = 'planner_data';
-    const LL_LS_KEY       = 'longlist_data';
-    const DRIVE_PLANNER   = 'planner_data.json';
-    const DRIVE_LL        = 'longlist_data.json';
-    const AUTOSAVE_DELAY  = 1000;
-
-    /* slot definitions */
-    const SLOTS = [
-      { id: 'mit',       label: 'Most important task', container: 'mit-tasks',        max: 1 },
-      { id: 'secondary', label: 'Secondary tasks',      container: 'secondary-tasks',  max: 2 },
-      { id: 'additional',label: 'Additional tasks',     container: 'additional-tasks', max: 2 },
+    const taskConfigs = [
+      { container: 'mit-tasks', nums: [1] },
+      { container: 'secondary-tasks', nums: [2, 3] },
+      { container: 'additional-tasks', nums: [4, 5] },
     ];
-
-    /* ═══════════════════════════════════════════
-       VIEW ROUTER
-    ═══════════════════════════════════════════ */
-    function showView(name) {
-      document.getElementById('view-planner').style.display  = name === 'planner'  ? 'block' : 'none';
-      document.getElementById('view-longlist').style.display = name === 'longlist' ? 'block' : 'none';
-    }
-
-    /* ═══════════════════════════════════════════
-       GOOGLE DRIVE SYNC
-    ═══════════════════════════════════════════ */
-    let accessToken = null;
-
-    function setSyncStatus(elId, msg) {
-      const el = document.getElementById(elId);
-      if (el) el.textContent = msg;
-    }
-
-    async function driveRequest(method, path, body) {
-      if (!accessToken) return null;
-      const res = await fetch('https://www.googleapis.com' + path, {
-        method,
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'Content-Type': 'application/json',
-        },
-        body: body ? JSON.stringify(body) : undefined,
-      });
-      if (!res.ok) return null;
-      return res.json();
-    }
-
-    async function findDriveFile(name) {
-      const q = encodeURIComponent(`name='${name}' and 'appDataFolder' in parents and trashed=false`);
-      const data = await driveRequest('GET', `/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id)`);
-      return data && data.files && data.files[0] ? data.files[0].id : null;
-    }
-
-    async function readDriveFile(name) {
-      const id = await findDriveFile(name);
-      if (!id) return null;
-      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`, {
-        headers: { Authorization: 'Bearer ' + accessToken },
-      });
-      if (!res.ok) return null;
-      return res.json();
-    }
-
-    async function writeDriveFile(name, data) {
-      const json = JSON.stringify(data);
-      const id   = await findDriveFile(name);
-      if (id) {
-        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`, {
-          method: 'PATCH',
-          headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-          body: json,
-        });
-      } else {
-        const meta = await driveRequest('POST', '/drive/v3/files', { name, parents: ['appDataFolder'] });
-        if (meta && meta.id) {
-          await fetch(`https://www.googleapis.com/upload/drive/v3/files/${meta.id}?uploadType=media`, {
-            method: 'PATCH',
-            headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-            body: json,
-          });
-        }
-      }
-    }
-
-    /* ═══════════════════════════════════════════
-       PLANNER — task rows
-    ═══════════════════════════════════════════ */
-    const taskInputs = {};   /* num -> { input, segs, levelRef, actualInput, tick } */
 
     function makeTaskRow(num) {
       const row = document.createElement('div');
       row.className = 'task-row';
-      row.dataset.taskNum = num;
 
-      const left       = document.createElement('div');
-      left.className   = 'task-left';
-      const numSpan    = document.createElement('span');
-      numSpan.className = 'task-num';
-      numSpan.textContent = num + '.';
-
-      const taskInput       = document.createElement('input');
-      taskInput.className   = 'task-input';
-      taskInput.type        = 'text';
+      const left = document.createElement('div');
+      left.className = 'task-left';
+      const taskInput = document.createElement('input');
+      taskInput.className = 'task-input';
+      taskInput.type = 'text';
       taskInput.placeholder = 'Enter task…';
       taskInput.setAttribute('aria-label', 'Task ' + num);
+      const numSpan = document.createElement('span');
+      numSpan.className = 'task-num';
+      numSpan.textContent = num + '.';
       left.append(numSpan, taskInput);
 
-      const controls   = document.createElement('div');
+      const controls = document.createElement('div');
       controls.className = 'task-controls';
 
       const bar = document.createElement('div');
       bar.className = 'session-bar';
       bar.setAttribute('role', 'group');
       bar.setAttribute('aria-label', 'Estimated time for task ' + num);
-
-      const levelRef = { value: 0 };
-      const segs = [];
+      let level = 0;
       for (let i = 1; i <= 5; i++) {
         const seg = document.createElement('button');
         seg.className = 'seg';
         seg.dataset.lvl = i;
         seg.setAttribute('aria-label', (i * 30) + ' minutes');
         seg.addEventListener('click', () => {
-          levelRef.value = (levelRef.value === i) ? 0 : i;
-          segs.forEach(s => s.classList.toggle('on', parseInt(s.dataset.lvl) <= levelRef.value));
-          schedulePlannerSave();
+          level = (level === i) ? 0 : i;
+          bar.querySelectorAll('.seg').forEach(s => {
+            s.classList.toggle('on', parseInt(s.dataset.lvl) <= level);
+          });
         });
         bar.appendChild(seg);
-        segs.push(seg);
       }
 
       const actualWrap = document.createElement('div');
       actualWrap.className = 'actual-wrap';
-      const actualInput = document.createElement('input');
-      actualInput.className = 'actual-input';
-      actualInput.type = 'number';
-      actualInput.min = '0'; actualInput.max = '24'; actualInput.step = '0.5';
-      actualInput.placeholder = '—';
-      actualInput.setAttribute('aria-label', 'Actual hours for task ' + num);
-      const actualLabel = document.createElement('span');
-      actualLabel.className = 'actual-label';
-      actualLabel.textContent = 'h';
-      actualWrap.append(actualInput, actualLabel);
+      actualWrap.innerHTML = '<input class="actual-input" type="number" min="0" max="24" step="0.5" placeholder="—" aria-label="Actual hours for task ' + num + '"><span class="actual-label">h</span>';
 
       const tick = document.createElement('button');
       tick.className = 'tick-btn';
@@ -938,24 +519,12 @@
         const isDone = tick.classList.toggle('done');
         taskInput.classList.toggle('done', isDone);
         tick.setAttribute('aria-label', isDone ? 'Mark task ' + num + ' incomplete' : 'Mark task ' + num + ' complete');
-        schedulePlannerSave();
       });
-
-      taskInput.addEventListener('input', schedulePlannerSave);
-      actualInput.addEventListener('input', schedulePlannerSave);
 
       controls.append(bar, actualWrap, tick);
       row.append(left, controls);
-
-      taskInputs[num] = { input: taskInput, segs, levelRef, actualInput, tick };
       return row;
     }
-
-    const taskConfigs = [
-      { container: 'mit-tasks',        nums: [1] },
-      { container: 'secondary-tasks',  nums: [2, 3] },
-      { container: 'additional-tasks', nums: [4, 5] },
-    ];
 
     taskConfigs.forEach(cfg => {
       const container = document.getElementById(cfg.container);
@@ -963,14 +532,19 @@
     });
 
     document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
-    document.getElementById('dateInput').addEventListener('change', schedulePlannerSave);
-    document.getElementById('notesArea').addEventListener('input', schedulePlannerSave);
+
+    function savePDF() {
+      const date = document.getElementById('dateInput').value;
+      const formatted = date ? new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'planner';
+      document.title = 'Productivity Planner 2014 ' + formatted;
+      window.print();
+      document.title = 'Daily Productivity Planner';
+    }
 
     document.querySelectorAll('.mood-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        schedulePlannerSave();
       });
     });
 
@@ -978,363 +552,8 @@
       btn.addEventListener('click', () => {
         document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        schedulePlannerSave();
       });
     });
-
-    /* ═══════════════════════════════════════════
-       PLANNER — save / load
-    ═══════════════════════════════════════════ */
-    let plannerSaveTimer = null;
-
-    function schedulePlannerSave() {
-      clearTimeout(plannerSaveTimer);
-      plannerSaveTimer = setTimeout(savePlanner, AUTOSAVE_DELAY);
-    }
-
-    function getPlannerData() {
-      const tasks = {};
-      for (const [num, refs] of Object.entries(taskInputs)) {
-        tasks[num] = {
-          text:   refs.input.value,
-          level:  refs.levelRef.value,
-          actual: refs.actualInput.value,
-          done:   refs.tick.classList.contains('done'),
-        };
-      }
-      const selectedMood   = document.querySelector('.mood-btn.selected');
-      const selectedRating = document.querySelector('.rating-btn.selected');
-      return {
-        date:   document.getElementById('dateInput').value,
-        tasks,
-        notes:  document.getElementById('notesArea').value,
-        mood:   selectedMood   ? selectedMood.dataset.mood     : null,
-        rating: selectedRating ? selectedRating.dataset.rating : null,
-      };
-    }
-
-    function applyPlannerData(data) {
-      if (!data) return;
-      if (data.date) document.getElementById('dateInput').value = data.date;
-      if (data.notes) document.getElementById('notesArea').value = data.notes;
-      if (data.tasks) {
-        for (const [num, t] of Object.entries(data.tasks)) {
-          const refs = taskInputs[num];
-          if (!refs) continue;
-          refs.input.value = t.text || '';
-          refs.levelRef.value = t.level || 0;
-          refs.segs.forEach(s => s.classList.toggle('on', parseInt(s.dataset.lvl) <= (t.level || 0)));
-          refs.actualInput.value = t.actual || '';
-          if (t.done) {
-            refs.tick.classList.add('done');
-            refs.input.classList.add('done');
-          }
-        }
-      }
-      if (data.mood) {
-        document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.dataset.mood === String(data.mood)));
-      }
-      if (data.rating) {
-        document.querySelectorAll('.rating-btn').forEach(b => b.classList.toggle('selected', b.dataset.rating === String(data.rating)));
-      }
-    }
-
-    async function savePlanner() {
-      const data = getPlannerData();
-      localStorage.setItem(PLANNER_LS_KEY, JSON.stringify(data));
-      if (accessToken) {
-        setSyncStatus('planner-sync-status', 'Saving…');
-        try {
-          await writeDriveFile(DRIVE_PLANNER, data);
-          setSyncStatus('planner-sync-status', 'Saved ✓');
-          setTimeout(() => setSyncStatus('planner-sync-status', ''), 2000);
-        } catch(e) {
-          setSyncStatus('planner-sync-status', 'Save failed');
-        }
-      }
-    }
-
-    async function loadPlanner() {
-      let data = null;
-      if (accessToken) {
-        setSyncStatus('planner-sync-status', 'Loading…');
-        data = await readDriveFile(DRIVE_PLANNER);
-        setSyncStatus('planner-sync-status', '');
-      }
-      if (!data) {
-        const raw = localStorage.getItem(PLANNER_LS_KEY);
-        if (raw) data = JSON.parse(raw);
-      }
-      applyPlannerData(data);
-    }
-
-    function savePDF() {
-      const date = document.getElementById('dateInput').value;
-      const formatted = date ? new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'planner';
-      document.title = 'Productivity Planner ' + formatted;
-      window.print();
-      document.title = 'Daily Productivity Planner';
-    }
-
-    /* ═══════════════════════════════════════════
-       LONG LIST — data model
-       Items: { id, text, done, order }
-    ═══════════════════════════════════════════ */
-    let llItems = [];       /* all items, sorted by .order */
-    let llSaveTimer = null;
-
-    function scheduleLLSave() {
-      clearTimeout(llSaveTimer);
-      llSaveTimer = setTimeout(saveLongList, AUTOSAVE_DELAY);
-    }
-
-    async function saveLongList() {
-      localStorage.setItem(LL_LS_KEY, JSON.stringify(llItems));
-      if (accessToken) {
-        setSyncStatus('ll-sync-status', 'Saving…');
-        try {
-          await writeDriveFile(DRIVE_LL, llItems);
-          setSyncStatus('ll-sync-status', 'Saved ✓');
-          setTimeout(() => setSyncStatus('ll-sync-status', ''), 2000);
-        } catch(e) {
-          setSyncStatus('ll-sync-status', 'Save failed');
-        }
-      }
-    }
-
-    async function loadLongList() {
-      let data = null;
-      if (accessToken) {
-        setSyncStatus('ll-sync-status', 'Loading…');
-        data = await readDriveFile(DRIVE_LL);
-        setSyncStatus('ll-sync-status', '');
-      }
-      if (!data) {
-        const raw = localStorage.getItem(LL_LS_KEY);
-        if (raw) data = JSON.parse(raw);
-      }
-      if (data && Array.isArray(data)) {
-        llItems = data;
-      }
-      renderLongList();
-    }
-
-    /* ═══════════════════════════════════════════
-       LONG LIST — render
-    ═══════════════════════════════════════════ */
-    function renderLongList() {
-      const todoList = document.getElementById('llList');
-      const doneList = document.getElementById('llDoneList');
-      const emptyMsg = document.getElementById('llEmpty');
-      const countLbl = document.getElementById('llCountLabel');
-      const toggleRow = document.getElementById('llToggleRow');
-      const doneBadge = document.getElementById('llDoneBadge');
-
-      todoList.innerHTML = '';
-      doneList.innerHTML = '';
-
-      const todo = llItems.filter(i => !i.done).sort((a,b) => a.order - b.order);
-      const done = llItems.filter(i =>  i.done).sort((a,b) => a.order - b.order);
-
-      countLbl.textContent = `To do — ${todo.length} item${todo.length !== 1 ? 's' : ''}`;
-      emptyMsg.style.display = todo.length === 0 ? 'block' : 'none';
-
-      todo.forEach(item => todoList.appendChild(makeListItem(item)));
-
-      doneBadge.textContent = `${done.length} done`;
-      toggleRow.style.display = done.length > 0 ? 'flex' : 'none';
-      done.forEach(item => doneList.appendChild(makeListItem(item)));
-    }
-
-    function makeListItem(item) {
-      const li = document.createElement('li');
-      li.className = 'll-item';
-      li.dataset.id = item.id;
-      li.draggable = !item.done;
-
-      const drag = document.createElement('span');
-      drag.className = 'll-drag';
-      drag.setAttribute('aria-hidden', 'true');
-      drag.textContent = '⠿';
-      if (item.done) drag.style.visibility = 'hidden';
-
-      const textEl = document.createElement('input');
-      textEl.type = 'text';
-      textEl.className = 'll-text' + (item.done ? ' done' : '');
-      textEl.value = item.text;
-      textEl.setAttribute('aria-label', 'Action text');
-      textEl.addEventListener('input', () => {
-        const it = llItems.find(i => i.id === item.id);
-        if (it) { it.text = textEl.value; scheduleLLSave(); }
-      });
-
-      const pullBtn = document.createElement('button');
-      pullBtn.className = 'll-pull-btn';
-      pullBtn.textContent = '+ Add to today';
-      pullBtn.setAttribute('aria-label', 'Add to today's planner');
-      pullBtn.addEventListener('click', () => openModal(item));
-      if (item.done) pullBtn.style.display = 'none';
-
-      const tick = document.createElement('button');
-      tick.className = 'll-tick' + (item.done ? ' done' : '');
-      tick.setAttribute('aria-label', item.done ? 'Mark incomplete' : 'Mark complete');
-      tick.innerHTML = '<svg class="checkmark" width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-      tick.addEventListener('click', () => {
-        const it = llItems.find(i => i.id === item.id);
-        if (it) {
-          it.done = !it.done;
-          scheduleLLSave();
-          renderLongList();
-        }
-      });
-
-      li.append(drag, textEl, pullBtn, tick);
-
-      /* drag-and-drop (todo items only) */
-      if (!item.done) {
-        li.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('text/plain', item.id);
-          li.classList.add('dragging');
-        });
-        li.addEventListener('dragend', () => li.classList.remove('dragging'));
-        li.addEventListener('dragover', e => {
-          e.preventDefault();
-          document.querySelectorAll('.ll-item').forEach(el => el.classList.remove('drag-over'));
-          li.classList.add('drag-over');
-        });
-        li.addEventListener('drop', e => {
-          e.preventDefault();
-          li.classList.remove('drag-over');
-          const draggedId = e.dataTransfer.getData('text/plain');
-          if (draggedId === item.id) return;
-          const draggedIdx = llItems.findIndex(i => i.id === draggedId);
-          const targetIdx  = llItems.findIndex(i => i.id === item.id);
-          if (draggedIdx === -1 || targetIdx === -1) return;
-          const [moved] = llItems.splice(draggedIdx, 1);
-          llItems.splice(targetIdx, 0, moved);
-          llItems.forEach((it, idx) => it.order = idx);
-          scheduleLLSave();
-          renderLongList();
-        });
-      }
-
-      return li;
-    }
-
-    /* add on Enter */
-    document.getElementById('llAddInput').addEventListener('keydown', e => {
-      if (e.key !== 'Enter') return;
-      const text = e.target.value.trim();
-      if (!text) return;
-      const maxOrder = llItems.reduce((m, i) => Math.max(m, i.order), -1);
-      llItems.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2), text, done: false, order: maxOrder + 1 });
-      e.target.value = '';
-      scheduleLLSave();
-      renderLongList();
-    });
-
-    /* show/hide done section */
-    function toggleDone() {
-      const section = document.getElementById('llDoneSection');
-      const arrow   = document.getElementById('llToggleArrow');
-      const row     = document.getElementById('llToggleRow');
-      const isOpen  = section.classList.toggle('open');
-      arrow.classList.toggle('open', isOpen);
-      row.setAttribute('aria-expanded', isOpen);
-    }
-
-    /* ═══════════════════════════════════════════
-       SLOT PICKER MODAL
-    ═══════════════════════════════════════════ */
-    let pendingItem = null;
-
-    function openModal(item) {
-      pendingItem = item;
-      document.getElementById('modalPreview').textContent = item.text;
-      const slotsEl = document.getElementById('modalSlots');
-      slotsEl.innerHTML = '';
-
-      SLOTS.forEach(slot => {
-        const container = document.getElementById(slot.container);
-        const inputs    = container.querySelectorAll('.task-input');
-        const emptyInputs = [];
-        inputs.forEach(inp => { if (!inp.value.trim()) emptyInputs.push(inp); });
-
-        const btn = document.createElement('button');
-        btn.className = 'modal-slot-btn';
-
-        if (emptyInputs.length === 0) {
-          btn.disabled = true;
-          btn.style.opacity = '0.45';
-          btn.style.cursor = 'not-allowed';
-          btn.innerHTML = `<span class="modal-slot-label">${slot.label}</span><span class="modal-slot-taken">All slots filled</span>`;
-        } else {
-          const slotNum = emptyInputs[0].getAttribute('aria-label').replace('Task ', '');
-          btn.innerHTML = `<span class="modal-slot-label">${slot.label}</span><span class="modal-slot-name">Slot ${slotNum} — empty</span>`;
-          btn.addEventListener('click', () => {
-            emptyInputs[0].value = item.text;
-            emptyInputs[0].dispatchEvent(new Event('input'));
-            closeModal();
-            showView('planner');
-          });
-        }
-
-        slotsEl.appendChild(btn);
-      });
-
-      document.getElementById('slotModal').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('slotModal').classList.remove('open');
-      pendingItem = null;
-    }
-
-    document.getElementById('slotModal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) closeModal();
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
-    });
-
-    /* ═══════════════════════════════════════════
-       GOOGLE SIGN-IN GATE
-    ═══════════════════════════════════════════ */
-    function initGoogleAuth() {
-      if (typeof google === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
-        loadPlanner();
-        loadLongList();
-        return;
-      }
-
-      const tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: GOOGLE_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/drive.appdata email profile',
-        callback: async (resp) => {
-          if (resp.error) { loadPlanner(); loadLongList(); return; }
-          /* verify allowed email */
-          const info = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: { Authorization: 'Bearer ' + resp.access_token }
-          }).then(r => r.json());
-          if (info.email !== ALLOWED_EMAIL) {
-            alert('Access denied: ' + info.email);
-            return;
-          }
-          accessToken = resp.access_token;
-          loadPlanner();
-          loadLongList();
-        },
-      });
-      tokenClient.requestAccessToken({ prompt: '' });
-    }
-
-    /* load GSI script then init */
-    const gsiScript = document.createElement('script');
-    gsiScript.src = 'https://accounts.google.com/gsi/client';
-    gsiScript.onload = initGoogleAuth;
-    gsiScript.onerror = () => { loadPlanner(); loadLongList(); };
-    document.head.appendChild(gsiScript);
   </script>
 </body>
 </html>
