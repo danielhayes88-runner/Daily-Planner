@@ -3,243 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Planner</title>
+  <title>Daily Productivity Planner</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --blue-1: #93c5fd;
-      --blue-2: #60a5fa;
-      --blue-3: #3b82f6;
-      --blue-4: #2563eb;
-      --blue-5: #1d4ed8;
-      --green: #22c55e;
-      --text: #1a1a1a;
-      --text-2: #555;
-      --text-3: #999;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --text-primary: #1a1a1a;
+      --text-secondary: #555;
+      --text-muted: #999;
       --border: #e0e0e0;
-      --border-2: #bbb;
-      --surface: #f5f5f5;
-      --card: #fff;
-      --bg: #f0f4f8;
+      --border-strong: #bbb;
+      --border-accent: #3b82f6;
+      --border-success: #22c55e;
+      --surface-1: #f5f5f5;
+      --fill-accent: #3b82f6;
+      --fill-success: #22c55e;
+      --on-accent: #fff;
       --radius: 6px;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --text: #f0f0f0;
-        --text-2: #aaa;
-        --text-3: #666;
-        --border: #2a2a2a;
-        --border-2: #444;
-        --surface: #1a1a1a;
-        --card: #1e1e1e;
-        --bg: #111;
+        --text-primary: #f0f0f0;
+        --text-secondary: #aaa;
+        --text-muted: #666;
+        --border: #333;
+        --border-strong: #555;
+        --surface-1: #222;
+        background: #141414;
       }
+      body { background: #141414; }
     }
 
     body {
-      font-family: var(--font);
-      color: var(--text);
-      background: var(--bg);
+      font-family: var(--font-sans);
+      color: var(--text-primary);
       min-height: 100vh;
+      padding: 2rem 1rem;
     }
 
-    /* ── LOGIN SCREEN ── */
-    #login-screen {
-      display: none;
-      min-height: 100vh;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    #login-screen.visible { display: flex; }
-
-    .login-card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 3rem 2.5rem;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-    }
-
-    .login-icon {
-      width: 48px;
-      height: 48px;
-      background: var(--blue-4);
-      border-radius: 12px;
-      margin: 0 auto 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .login-icon svg { display: block; }
-
-    .login-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      letter-spacing: -0.01em;
-    }
-
-    .login-sub {
-      font-size: 13px;
-      color: var(--text-3);
-      margin-bottom: 2rem;
-      line-height: 1.5;
-    }
-
-    .google-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 11px 16px;
-      border: 1.5px solid var(--border-2);
-      border-radius: var(--radius);
-      background: var(--card);
-      font-size: 14px;
-      font-weight: 500;
-      font-family: var(--font);
-      color: var(--text);
-      cursor: pointer;
-      transition: background 0.12s, border-color 0.12s;
-    }
-
-    .google-btn:hover { background: var(--surface); border-color: var(--blue-3); }
-
-    .login-error {
-      margin-top: 1rem;
-      font-size: 12px;
-      color: #ef4444;
-      display: none;
-    }
-
-    .login-error.visible { display: block; }
-
-    /* ── APP SHELL (hidden until authed) ── */
-    #app { display: none; }
-    #app.visible { display: block; }
-
-    /* ── NAV ── */
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-      height: 52px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .nav-brand {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--text);
-    }
-
-    .nav-tabs { display: flex; gap: 2px; }
-
-    .nav-tab {
-      padding: 6px 14px;
-      border: none;
-      background: none;
-      font-size: 13px;
-      font-family: var(--font);
-      color: var(--text-3);
-      cursor: pointer;
-      border-radius: var(--radius);
-      transition: background 0.12s, color 0.12s;
-    }
-
-    .nav-tab:hover { background: var(--surface); color: var(--text-2); }
-    .nav-tab.active { background: var(--surface); color: var(--text); font-weight: 500; }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sync-status {
-      font-size: 11px;
-      color: var(--text-3);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .sync-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--text-3);
-      flex-shrink: 0;
-    }
-
-    .sync-dot.ok  { background: var(--green); }
-    .sync-dot.busy{ background: #f59e0b; }
-    .sync-dot.err { background: #ef4444; }
-
-    .nav-user {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-avatar {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .nav-email {
-      font-size: 12px;
-      color: var(--text-3);
-      max-width: 160px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .sign-out-btn {
-      padding: 4px 10px;
-      border: 1px solid var(--border-2);
-      border-radius: var(--radius);
-      background: transparent;
-      font-size: 11px;
-      font-family: var(--font);
-      color: var(--text-3);
-      cursor: pointer;
-      transition: background 0.12s;
-    }
-
-    .sign-out-btn:hover { background: var(--surface); color: var(--text); }
-
-    /* ── PAGES ── */
-    .page { display: none; padding: 2rem 1rem; }
-    .page.active { display: block; }
-
-    /* ── PLANNER ── */
-    .planner {
+    /* ── shared card ── */
+    .card {
       max-width: 680px;
       margin: 0 auto;
-      background: var(--card);
-      border-radius: 12px;
       padding: 2rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
+
+    @media (prefers-color-scheme: dark) {
+      .card { background: #1e1e1e; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+    }
+
+    /* ── nav link bar (top of each view) ── */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px 10px;
+      transition: color 0.12s, border-color 0.12s;
+      cursor: pointer;
+      background: none;
+    }
+
+    .nav-link:hover { color: var(--text-primary); border-color: var(--border-strong); }
+
+    /* ── planner ── */
+    #view-planner { display: block; }
+    #view-longlist { display: none; }
 
     .date-bar {
       display: flex;
@@ -249,59 +96,60 @@
     }
 
     .date-label {
-      font-size: 11px;
-      color: var(--text-3);
+      font-size: 13px;
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
     }
 
     .date-input {
       border: none;
-      border-bottom: 1.5px solid var(--border-2);
+      border-bottom: 1.5px solid var(--border-strong);
       background: transparent;
       font-size: 18px;
       font-weight: 500;
-      color: var(--text);
+      color: var(--text-primary);
       padding: 2px 4px;
       outline: none;
-      font-family: var(--font);
+      font-family: var(--font-sans);
     }
 
-    .date-input:focus { border-bottom-color: var(--blue-3); }
+    .date-input:focus { border-bottom-color: var(--border-accent); }
 
     .col-labels {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
       padding: 0 0 4px;
+      align-items: center;
     }
 
     .col-label {
       font-size: 10px;
-      color: var(--text-3);
+      color: var(--text-muted);
       text-align: center;
       letter-spacing: 0.04em;
     }
 
-    .col-label.w-est  { width: 113px; }
-    .col-label.w-act  { width: 52px; }
-    .col-label.w-done { width: 24px; }
+    .col-label.sessions-lbl { width: 113px; }
+    .col-label.actual-lbl  { width: 52px; }
+    .col-label.done-lbl    { width: 24px; }
 
     .section-block { margin-bottom: 1.5rem; }
 
     .section-title {
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.09em;
-      color: var(--blue-4);
-      margin-bottom: 2px;
+      letter-spacing: 0.08em;
+      color: #2563eb;
+      margin: 0 0 2px;
     }
 
     .section-sub {
       font-size: 12px;
-      color: var(--text-3);
-      margin-bottom: 12px;
+      color: var(--text-muted);
+      margin: 0 0 12px;
     }
 
     .task-row {
@@ -319,60 +167,60 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 0;
     }
 
     .task-num {
       font-size: 13px;
-      color: var(--text-3);
-      min-width: 18px;
-      flex-shrink: 0;
+      color: var(--text-muted);
+      min-width: 16px;
     }
 
     .task-input {
       border: none;
-      border-bottom: 1px solid var(--border);
       background: transparent;
       font-size: 14px;
-      color: var(--text);
+      color: var(--text-primary);
       outline: none;
       flex: 1;
       padding: 4px 0;
-      min-width: 0;
-      font-family: var(--font);
-      transition: color 0.2s;
+      border-bottom: 1px solid var(--border);
       width: 100%;
+      font-family: var(--font-sans);
+      transition: color 0.2s;
     }
 
-    .task-input:focus { border-bottom-color: var(--blue-3); }
-    .task-input.done  { color: var(--text-3); text-decoration: line-through; }
+    .task-input:focus { border-bottom-color: var(--border-accent); }
+    .task-input.done  { color: var(--text-muted); text-decoration: line-through; }
 
     .task-controls {
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-shrink: 0;
     }
 
-    .seg-bar { display: flex; gap: 3px; }
+    .session-bar {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
 
     .seg {
       width: 22px;
       height: 14px;
       border-radius: 3px;
-      border: 1.5px solid var(--border-2);
+      border: 1.5px solid var(--border-strong);
       background: transparent;
       cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
       padding: 0;
-      transition: background 0.12s, border-color 0.12s;
     }
 
     .seg.on { border-color: transparent; }
-    .seg[data-lvl="1"].on { background: var(--blue-1); }
-    .seg[data-lvl="2"].on { background: var(--blue-2); }
-    .seg[data-lvl="3"].on { background: var(--blue-3); }
-    .seg[data-lvl="4"].on { background: var(--blue-4); }
-    .seg[data-lvl="5"].on { background: var(--blue-5); }
+    .seg[data-lvl="1"].on { background: #93c5fd; }
+    .seg[data-lvl="2"].on { background: #60a5fa; }
+    .seg[data-lvl="3"].on { background: #3b82f6; }
+    .seg[data-lvl="4"].on { background: #2563eb; }
+    .seg[data-lvl="5"].on { background: #1d4ed8; }
 
     .actual-wrap {
       display: flex;
@@ -383,50 +231,48 @@
     .actual-input {
       width: 36px;
       border: none;
-      border-bottom: 1.5px solid var(--border-2);
+      border-bottom: 1.5px solid var(--border-strong);
       background: transparent;
       font-size: 13px;
-      color: var(--text);
+      color: var(--text-primary);
       text-align: center;
       outline: none;
       padding: 2px 0;
-      font-family: var(--font);
+      font-family: var(--font-sans);
     }
 
-    .actual-input:focus { border-bottom-color: var(--blue-3); }
+    .actual-input:focus { border-bottom-color: var(--border-accent); }
 
-    .actual-label { font-size: 11px; color: var(--text-3); }
+    .actual-label { font-size: 11px; color: var(--text-muted); }
 
     .tick-btn {
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      border: 1.5px solid var(--border-2);
+      border: 1.5px solid var(--border-strong);
       background: transparent;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
-      transition: background 0.12s, border-color 0.12s;
+      transition: background 0.15s, border-color 0.15s;
       flex-shrink: 0;
     }
 
-    .tick-btn:hover { border-color: var(--green); }
-    .tick-btn.done  { background: var(--green); border-color: var(--green); }
-    .tick-btn .ck   { display: none; }
-    .tick-btn.done .ck { display: block; }
+    .tick-btn:hover { border-color: var(--border-success); }
+    .tick-btn.done  { background: var(--fill-success); border-color: var(--fill-success); }
+    .tick-btn .checkmark { display: none; }
+    .tick-btn.done .checkmark { display: block; }
 
-    .divider {
-      border: none;
-      border-top: 0.5px solid var(--border);
-      margin: 1.5rem 0;
-    }
+    .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+
+    .notes-block { margin-bottom: 1.5rem; }
 
     .notes-label {
       font-size: 11px;
       font-weight: 500;
-      color: var(--text-3);
+      color: var(--text-muted);
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 8px;
@@ -438,16 +284,16 @@
       border-bottom: 0.5px solid var(--border);
       background: transparent;
       font-size: 13px;
-      color: var(--text);
-      font-family: var(--font);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
       resize: none;
       outline: none;
       line-height: 2;
       padding: 0;
-      min-height: 80px;
+      min-height: 96px;
     }
 
-    .notes-area:focus { border-bottom-color: var(--blue-3); }
+    .notes-area:focus { border-bottom-color: var(--border-accent); }
 
     .footer-row {
       display: flex;
@@ -457,7 +303,6 @@
       border-top: 0.5px solid var(--border);
       flex-wrap: wrap;
       gap: 1rem;
-      margin-top: 1.5rem;
     }
 
     .mood-wrap, .rating-wrap {
@@ -468,7 +313,7 @@
 
     .mood-label, .rating-label {
       font-size: 11px;
-      color: var(--text-3);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
       margin-right: 4px;
@@ -477,7 +322,7 @@
     .mood-btn {
       font-size: 18px;
       cursor: pointer;
-      opacity: 0.3;
+      opacity: 0.35;
       transition: opacity 0.12s, transform 0.12s;
       border: none;
       background: none;
@@ -485,809 +330,1011 @@
       line-height: 1;
     }
 
-    .mood-btn:hover { opacity: 0.65; }
-    .mood-btn.sel   { opacity: 1; transform: scale(1.2); }
+    .mood-btn:hover { opacity: 0.7; }
+    .mood-btn.selected { opacity: 1; transform: scale(1.2); }
 
     .rating-btn {
       width: 28px;
       height: 28px;
-      border: 0.5px solid var(--border-2);
+      border: 0.5px solid var(--border-strong);
       border-radius: var(--radius);
       background: transparent;
       font-size: 12px;
       font-weight: 500;
-      color: var(--text-2);
+      color: var(--text-secondary);
       cursor: pointer;
-      font-family: var(--font);
       transition: background 0.12s, color 0.12s;
+      font-family: var(--font-sans);
     }
 
-    .rating-btn:hover { background: var(--surface); }
-    .rating-btn.sel   { background: var(--blue-3); color: #fff; border-color: var(--blue-3); }
+    .rating-btn:hover { background: var(--surface-1); }
+
+    .rating-btn.selected {
+      background: var(--fill-accent);
+      color: var(--on-accent);
+      border-color: var(--fill-accent);
+    }
 
     .save-btn {
       display: block;
       width: 100%;
       margin-top: 1.5rem;
       padding: 10px;
-      border: 0.5px solid var(--border-2);
+      border: 0.5px solid var(--border-strong);
       border-radius: var(--radius);
       background: transparent;
       font-size: 14px;
       font-weight: 500;
-      color: var(--text);
+      color: var(--text-primary);
       cursor: pointer;
-      font-family: var(--font);
+      letter-spacing: 0.02em;
       transition: background 0.12s;
+      font-family: var(--font-sans);
     }
 
-    .save-btn:hover { background: var(--surface); }
+    .save-btn:hover { background: var(--surface-1); }
 
-    /* ── HISTORY ── */
-    .history-wrap { max-width: 680px; margin: 0 auto; }
+    /* ── long list ── */
+    .ll-header { margin-bottom: 1.5rem; }
+    .ll-title { font-size: 22px; font-weight: 500; color: var(--text-primary); margin: 0 0 4px; }
+    .ll-sub   { font-size: 13px; color: var(--text-muted); }
 
-    .history-header {
+    .ll-add-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-      gap: 1rem;
-      flex-wrap: wrap;
+      gap: 10px;
+      padding-bottom: 1.25rem;
+      border-bottom: 0.5px solid var(--border-strong);
+      margin-bottom: 1rem;
     }
 
-    .history-title { font-size: 15px; font-weight: 600; }
+    .ll-add-icon { font-size: 16px; color: var(--text-muted); }
 
-    .search-input {
-      padding: 7px 12px;
-      border: 1px solid var(--border-2);
-      border-radius: var(--radius);
-      background: var(--card);
-      font-size: 13px;
-      color: var(--text);
-      font-family: var(--font);
+    .ll-add-input {
+      flex: 1;
+      border: none;
+      border-bottom: 1.5px solid var(--border-strong);
+      background: transparent;
+      font-size: 14px;
+      color: var(--text-primary);
+      padding: 5px 2px;
       outline: none;
-      width: 200px;
+      font-family: var(--font-sans);
     }
 
-    .search-input:focus { border-color: var(--blue-3); }
+    .ll-add-input:focus { border-bottom-color: var(--border-accent); }
+    .ll-add-hint { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
 
-    .history-list { display: flex; flex-direction: column; gap: 10px; }
-
-    .history-card {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 1rem 1.25rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-      cursor: pointer;
-      transition: box-shadow 0.12s;
-      border: 1px solid transparent;
-    }
-
-    .history-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-color: var(--border); }
-
-    .hc-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .ll-count-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
       margin-bottom: 6px;
     }
 
-    .hc-date   { font-size: 14px; font-weight: 600; }
-    .hc-meta   { display: flex; gap: 10px; align-items: center; }
-    .hc-mood   { font-size: 16px; }
-    .hc-rating {
-      font-size: 12px; font-weight: 600; color: var(--blue-4);
-      background: var(--surface); padding: 2px 7px; border-radius: 20px;
-    }
-    .hc-tasks  { font-size: 12px; color: var(--text-3); }
-    .hc-tasks span { color: var(--green); font-weight: 500; }
+    .ll-list { list-style: none; }
 
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-3);
+    .ll-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 0.5px solid var(--border);
+      cursor: default;
+    }
+
+    .ll-item:last-child { border-bottom: none; }
+    .ll-item.dragging { opacity: 0.4; }
+    .ll-item.drag-over { border-top: 2px solid var(--border-accent); }
+
+    .ll-drag {
+      color: var(--text-muted);
+      font-size: 15px;
+      cursor: grab;
+      flex-shrink: 0;
+      user-select: none;
+      padding: 2px 0;
+    }
+
+    .ll-drag:active { cursor: grabbing; }
+
+    .ll-text {
+      flex: 1;
       font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      border: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      padding: 2px 0;
+      border-bottom: 1px solid transparent;
     }
 
-    /* ── TOAST ── */
-    .toast {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      background: var(--text);
-      color: var(--card);
-      font-size: 13px;
-      padding: 9px 16px;
+    .ll-text:focus { border-bottom-color: var(--border-accent); }
+    .ll-text.done { color: var(--text-muted); text-decoration: line-through; }
+
+    .ll-pull-btn {
+      font-size: 11px;
+      color: var(--fill-accent);
+      border: 0.5px solid var(--border-accent);
       border-radius: var(--radius);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.2s, transform 0.2s;
-      pointer-events: none;
+      padding: 3px 8px;
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: var(--font-sans);
+      transition: background 0.12s;
+      flex-shrink: 0;
+    }
+
+    .ll-pull-btn:hover { background: #eff6ff; }
+
+    @media (prefers-color-scheme: dark) {
+      .ll-pull-btn:hover { background: #1e3a5f; }
+    }
+
+    .ll-tick {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-strong);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .ll-tick:hover { border-color: var(--border-success); }
+    .ll-tick.done  { background: var(--fill-success); border-color: var(--fill-success); }
+    .ll-tick .checkmark { display: none; }
+    .ll-tick.done .checkmark { display: block; }
+
+    .ll-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 0.5px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ll-toggle-arrow { font-size: 12px; color: var(--text-muted); transition: transform 0.15s; }
+    .ll-toggle-arrow.open { transform: rotate(90deg); }
+    .ll-toggle-label { font-size: 13px; color: var(--text-muted); }
+    .ll-done-badge {
+      font-size: 11px;
+      background: var(--surface-1);
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 8px;
+      color: var(--text-muted);
+    }
+
+    .ll-done-section { display: none; margin-top: 8px; }
+    .ll-done-section.open { display: block; }
+
+    .ll-empty {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 1.5rem 0;
+      text-align: center;
+    }
+
+    /* ── slot-picker modal ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
       z-index: 100;
+      align-items: center;
+      justify-content: center;
     }
 
-    .toast.show { opacity: 1; transform: translateY(0); }
+    .modal-backdrop.open { display: flex; }
 
-    /* ── MOBILE ── */
-    @media (max-width: 520px) {
-      .planner { padding: 1.25rem; border-radius: 10px; }
-      .nav-email { display: none; }
-      .search-input { width: 150px; }
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 320px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
     }
 
-    /* ── PRINT ── */
+    @media (prefers-color-scheme: dark) {
+      .modal { background: #1e1e1e; }
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .modal-task-preview {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .modal-slot-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border: 0.5px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: transparent;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: background 0.12s, border-color 0.12s;
+    }
+
+    .modal-slot-btn:hover { background: var(--surface-1); border-color: var(--border-accent); }
+    .modal-slot-btn:last-of-type { margin-bottom: 0; }
+
+    .modal-slot-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #2563eb;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .modal-slot-name { font-size: 13px; color: var(--text-primary); }
+    .modal-slot-taken { font-size: 11px; color: var(--text-muted); font-style: italic; }
+
+    .modal-cancel {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .modal-cancel:hover { color: var(--text-primary); }
+
+    /* ── sync status ── */
+    .sync-status {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* ── print ── */
     @media print {
       @page { size: A4; margin: 20mm 18mm; }
-      .nav, .save-btn, .toast, #login-screen { display: none !important; }
-      body { background: #fff !important; padding: 0; }
-      #app { display: block !important; }
-      .page { display: block !important; padding: 0; }
-      #page-history { display: none !important; }
-      .planner { max-width: 100%; box-shadow: none; border-radius: 0; padding: 0; background: #fff !important; }
+
+      body { padding: 0; background: #fff !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      .card { max-width: 100%; box-shadow: none; border-radius: 0; padding: 0; background: #fff !important; }
+
+      .save-btn, .top-nav, #view-longlist, .modal-backdrop { display: none !important; }
+
+      .task-input { width: 100%; }
+
       .seg.on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
       .tick-btn.done { background: #22c55e !important; border-color: #22c55e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .tick-btn.done .ck { display: block !important; }
+
+      .tick-btn.done .checkmark { display: block !important; }
+
       .section-title { color: #2563eb !important; }
+
+      textarea { border: none; resize: none; }
+    }
+
+    @media (max-width: 520px) {
+      .card { padding: 1.25rem; }
+      .footer-row { flex-direction: column; align-items: flex-start; }
+      .ll-pull-btn { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     LOGIN SCREEN
-     Shown to anyone who isn't authenticated
-════════════════════════════════════════════ -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="9" width="18" height="13" rx="2" stroke="white" stroke-width="1.8"/>
-        <path d="M8 9V6a4 4 0 018 0v3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-        <circle cx="12" cy="15" r="1.5" fill="white"/>
-      </svg>
+  <!-- ═══════════════════════════════════════════════
+       VIEW: PLANNER
+  ═══════════════════════════════════════════════ -->
+  <div id="view-planner" class="card">
+
+    <div class="top-nav">
+      <button class="nav-link" onclick="showView('longlist')" aria-label="Go to long list">
+        ☰ Long list
+      </button>
+      <span class="sync-status" id="planner-sync-status"></span>
     </div>
-    <h1 class="login-title">Daily Planner</h1>
-    <p class="login-sub">Sign in with your Google account to access your planner.</p>
-    <button class="google-btn" onclick="startLogin()">
-      <svg width="18" height="18" viewBox="0 0 18 18">
-        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
-        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/>
-        <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
-        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/>
-      </svg>
-      Continue with Google
-    </button>
-    <p class="login-error" id="loginError"></p>
+
+    <div class="date-bar">
+      <span class="date-label">Date</span>
+      <input class="date-input" type="date" id="dateInput" />
+    </div>
+
+    <div class="col-labels">
+      <span class="col-label sessions-lbl">Estimated time</span>
+      <span class="col-label actual-lbl">Actual (h)</span>
+      <span class="col-label done-lbl"></span>
+    </div>
+
+    <div class="section-block">
+      <p class="section-title">Most important task of the day</p>
+      <p class="section-sub">If this was the only thing you did today, you'd be satisfied.</p>
+      <div id="mit-tasks"></div>
+    </div>
+
+    <div class="section-block">
+      <p class="section-title">Secondary tasks</p>
+      <p class="section-sub">Completion of these tasks will make the day even better.</p>
+      <div id="secondary-tasks"></div>
+    </div>
+
+    <div class="section-block">
+      <p class="section-title">Additional tasks</p>
+      <p class="section-sub">Do these only after completing the tasks above.</p>
+      <div id="additional-tasks"></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="notes-block">
+      <div class="notes-label">Notes</div>
+      <textarea class="notes-area" id="notesArea" placeholder="Reflections, ideas, blockers…" rows="5"></textarea>
+    </div>
+
+    <div class="footer-row">
+      <div class="mood-wrap">
+        <span class="mood-label">Mood</span>
+        <button class="mood-btn" data-mood="1" title="Awful">😞</button>
+        <button class="mood-btn" data-mood="2" title="Bad">😕</button>
+        <button class="mood-btn" data-mood="3" title="Okay">😐</button>
+        <button class="mood-btn" data-mood="4" title="Good">🙂</button>
+        <button class="mood-btn" data-mood="5" title="Great">😄</button>
+      </div>
+      <div class="rating-wrap">
+        <span class="rating-label">Rate your day</span>
+        <button class="rating-btn" data-rating="1">1</button>
+        <button class="rating-btn" data-rating="2">2</button>
+        <button class="rating-btn" data-rating="3">3</button>
+        <button class="rating-btn" data-rating="4">4</button>
+        <button class="rating-btn" data-rating="5">5</button>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="savePDF()">Save planner</button>
   </div>
-</div>
 
-<!-- ══════════════════════════════════════════
-     APP — hidden until authenticated
-════════════════════════════════════════════ -->
-<div id="app">
 
-  <nav class="nav">
-    <span class="nav-brand">Planner</span>
-    <div class="nav-tabs">
-      <button class="nav-tab active" data-tab="today"   onclick="switchTab('today')">Today</button>
-      <button class="nav-tab"        data-tab="history" onclick="switchTab('history')">History</button>
+  <!-- ═══════════════════════════════════════════════
+       VIEW: LONG LIST
+  ═══════════════════════════════════════════════ -->
+  <div id="view-longlist" class="card">
+
+    <div class="top-nav">
+      <button class="nav-link" onclick="showView('planner')" aria-label="Back to today's planner">
+        ← Today's planner
+      </button>
+      <span class="sync-status" id="ll-sync-status"></span>
     </div>
-    <div class="nav-right">
-      <div class="sync-status">
-        <div class="sync-dot" id="syncDot"></div>
-        <span id="syncLabel">Syncing…</span>
-      </div>
-      <div class="nav-user">
-        <img class="nav-avatar" id="navAvatar" src="" alt="" style="display:none"/>
-        <span class="nav-email" id="navEmail"></span>
-        <button class="sign-out-btn" onclick="signOut()">Sign out</button>
-      </div>
+
+    <div class="ll-header">
+      <p class="ll-title">Long list</p>
+      <p class="ll-sub">Your running backlog. Drag to prioritise, or pull items into today's planner.</p>
     </div>
-  </nav>
 
-  <!-- TODAY -->
-  <div class="page active" id="page-today">
-    <div class="planner">
-      <div class="date-bar">
-        <span class="date-label">Date</span>
-        <input class="date-input" type="date" id="dateInput" />
-      </div>
+    <div class="ll-add-row">
+      <span class="ll-add-icon" aria-hidden="true">+</span>
+      <input class="ll-add-input" id="llAddInput" type="text" placeholder="Add an action and press Enter" aria-label="New action" />
+      <span class="ll-add-hint">↵ to add</span>
+    </div>
 
-      <div class="col-labels">
-        <span class="col-label w-est">Estimated time</span>
-        <span class="col-label w-act">Actual (h)</span>
-        <span class="col-label w-done"></span>
-      </div>
+    <p class="ll-count-label" id="llCountLabel">To do</p>
+    <ul class="ll-list" id="llList" aria-label="Actions to do"></ul>
+    <p class="ll-empty" id="llEmpty" style="display:none">Nothing here yet — add an action above.</p>
 
-      <div class="section-block">
-        <p class="section-title">Most important task</p>
-        <p class="section-sub">If this was the only thing you finished today, you'd be satisfied.</p>
-        <div id="mit-tasks"></div>
-      </div>
+    <div class="ll-toggle-row" id="llToggleRow" style="display:none" role="button" tabindex="0" aria-expanded="false" onclick="toggleDone()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleDone()">
+      <span class="ll-toggle-arrow" id="llToggleArrow">▶</span>
+      <span class="ll-toggle-label">Show completed</span>
+      <span class="ll-done-badge" id="llDoneBadge">0 done</span>
+    </div>
 
-      <div class="section-block">
-        <p class="section-title">Secondary tasks</p>
-        <p class="section-sub">Finishing these makes the day even better.</p>
-        <div id="sec-tasks"></div>
-      </div>
-
-      <div class="section-block">
-        <p class="section-title">Additional tasks</p>
-        <p class="section-sub">Only after everything above is done.</p>
-        <div id="add-tasks"></div>
-      </div>
-
-      <hr class="divider">
-
-      <div>
-        <div class="notes-label">Notes</div>
-        <textarea class="notes-area" id="notesArea" placeholder="Reflections, blockers, ideas…" rows="4"></textarea>
-      </div>
-
-      <div class="footer-row">
-        <div class="mood-wrap">
-          <span class="mood-label">Mood</span>
-          <button class="mood-btn" data-mood="😞" title="Awful">😞</button>
-          <button class="mood-btn" data-mood="😕" title="Bad">😕</button>
-          <button class="mood-btn" data-mood="😐" title="Okay">😐</button>
-          <button class="mood-btn" data-mood="🙂" title="Good">🙂</button>
-          <button class="mood-btn" data-mood="😄" title="Great">😄</button>
-        </div>
-        <div class="rating-wrap">
-          <span class="rating-label">Rate your day</span>
-          <button class="rating-btn" data-val="1">1</button>
-          <button class="rating-btn" data-val="2">2</button>
-          <button class="rating-btn" data-val="3">3</button>
-          <button class="rating-btn" data-val="4">4</button>
-          <button class="rating-btn" data-val="5">5</button>
-        </div>
-      </div>
-
-      <button class="save-btn" onclick="savePDF()">Save as PDF</button>
+    <div class="ll-done-section" id="llDoneSection" aria-label="Completed actions">
+      <ul class="ll-list" id="llDoneList"></ul>
     </div>
   </div>
 
-  <!-- HISTORY -->
-  <div class="page" id="page-history">
-    <div class="history-wrap">
-      <div class="history-header">
-        <span class="history-title">Past planners</span>
-        <input class="search-input" type="search" placeholder="Search tasks or notes…" id="searchInput" oninput="renderHistory()" />
-      </div>
-      <div class="history-list" id="historyList"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       SLOT PICKER MODAL
+  ═══════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="slotModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <p class="modal-title" id="modalTitle">Add to today's planner</p>
+      <p class="modal-task-preview" id="modalPreview"></p>
+      <div id="modalSlots"></div>
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 
-</div><!-- /app -->
 
-<div class="toast" id="toast"></div>
+  <script>
+    /* ═══════════════════════════════════════════
+       CONFIG — fill these in
+    ═══════════════════════════════════════════ */
+    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
+    const ALLOWED_EMAIL    = 'YOUR_EMAIL@gmail.com';
 
-<script>
-// ─────────────────────────────────────────────
-// CONFIG
-// Replace both values before deploying.
-// ─────────────────────────────────────────────
-const GOOGLE_CLIENT_ID   = '793479965664-vthoa84agf2b9lr7leomnsf50mo8cfpn.apps.googleusercontent.com';
-const ALLOWED_EMAIL      = 'danielhayes88@gmail.com';   // e.g. 'jane@gmail.com'
+    /* ═══════════════════════════════════════════
+       CONSTANTS
+    ═══════════════════════════════════════════ */
+    const PLANNER_LS_KEY  = 'planner_data';
+    const LL_LS_KEY       = 'longlist_data';
+    const DRIVE_PLANNER   = 'planner_data.json';
+    const DRIVE_LL        = 'longlist_data.json';
+    const AUTOSAVE_DELAY  = 1000;
 
-const DRIVE_FILE_NAME    = 'planner-data.json';
-// Request Drive storage + profile (so we can read the user's email to verify)
-const SCOPES             = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+    /* slot definitions */
+    const SLOTS = [
+      { id: 'mit',       label: 'Most important task', container: 'mit-tasks',        max: 1 },
+      { id: 'secondary', label: 'Secondary tasks',      container: 'secondary-tasks',  max: 2 },
+      { id: 'additional',label: 'Additional tasks',     container: 'additional-tasks', max: 2 },
+    ];
 
-// ─────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────
-let allData      = {};
-let driveFileId  = null;
-let tokenClient  = null;
-let accessToken  = null;
-let isDriveReady = false;
-let saveTimer    = null;
+    /* ═══════════════════════════════════════════
+       VIEW ROUTER
+    ═══════════════════════════════════════════ */
+    function showView(name) {
+      document.getElementById('view-planner').style.display  = name === 'planner'  ? 'block' : 'none';
+      document.getElementById('view-longlist').style.display = name === 'longlist' ? 'block' : 'none';
+    }
 
-const SECTIONS = [
-  { id: 'mit-tasks', nums: [1],   key: 'mit' },
-  { id: 'sec-tasks', nums: [2,3], key: 'sec' },
-  { id: 'add-tasks', nums: [4,5], key: 'add' },
-];
+    /* ═══════════════════════════════════════════
+       GOOGLE DRIVE SYNC
+    ═══════════════════════════════════════════ */
+    let accessToken = null;
 
-// ─────────────────────────────────────────────
-// DOM HELPERS
-// ─────────────────────────────────────────────
-function $(id) { return document.getElementById(id); }
+    function setSyncStatus(elId, msg) {
+      const el = document.getElementById(elId);
+      if (el) el.textContent = msg;
+    }
 
-function toast(msg, dur = 2500) {
-  const el = $('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove('show'), dur);
-}
+    async function driveRequest(method, path, body) {
+      if (!accessToken) return null;
+      const res = await fetch('https://www.googleapis.com' + path, {
+        method,
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      if (!res.ok) return null;
+      return res.json();
+    }
 
-function showLoginError(msg) {
-  const el = $('loginError');
-  el.textContent = msg;
-  el.classList.add('visible');
-}
+    async function findDriveFile(name) {
+      const q = encodeURIComponent(`name='${name}' and 'appDataFolder' in parents and trashed=false`);
+      const data = await driveRequest('GET', `/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id)`);
+      return data && data.files && data.files[0] ? data.files[0].id : null;
+    }
 
-function clearLoginError() {
-  $('loginError').classList.remove('visible');
-}
+    async function readDriveFile(name) {
+      const id = await findDriveFile(name);
+      if (!id) return null;
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`, {
+        headers: { Authorization: 'Bearer ' + accessToken },
+      });
+      if (!res.ok) return null;
+      return res.json();
+    }
 
-// ─────────────────────────────────────────────
-// AUTH GATE
-// ─────────────────────────────────────────────
-function showLogin() {
-  $('login-screen').classList.add('visible');
-  $('app').classList.remove('visible');
-}
-
-function showApp() {
-  $('login-screen').classList.remove('visible');
-  $('app').classList.add('visible');
-}
-
-function loadGoogleScript() {
-  return new Promise(resolve => {
-    if (window.google?.accounts) return resolve();
-    const s = document.createElement('script');
-    s.src = 'https://accounts.google.com/gsi/client';
-    s.onload = resolve;
-    document.head.appendChild(s);
-  });
-}
-
-async function startLogin() {
-  clearLoginError();
-
-  if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
-    showLoginError('Client ID not configured — see the setup guide.');
-    return;
-  }
-
-  await loadGoogleScript();
-
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: GOOGLE_CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if (resp.error) {
-        showLoginError('Sign-in was cancelled or failed. Please try again.');
-        return;
+    async function writeDriveFile(name, data) {
+      const json = JSON.stringify(data);
+      const id   = await findDriveFile(name);
+      if (id) {
+        await fetch(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`, {
+          method: 'PATCH',
+          headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+          body: json,
+        });
+      } else {
+        const meta = await driveRequest('POST', '/drive/v3/files', { name, parents: ['appDataFolder'] });
+        if (meta && meta.id) {
+          await fetch(`https://www.googleapis.com/upload/drive/v3/files/${meta.id}?uploadType=media`, {
+            method: 'PATCH',
+            headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+            body: json,
+          });
+        }
       }
-      accessToken = resp.access_token;
+    }
 
-      // Verify the signed-in email matches the allowed account
-      try {
-        const profile = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-          headers: { 'Authorization': 'Bearer ' + accessToken }
-        }).then(r => r.json());
+    /* ═══════════════════════════════════════════
+       PLANNER — task rows
+    ═══════════════════════════════════════════ */
+    const taskInputs = {};   /* num -> { input, segs, levelRef, actualInput, tick } */
 
-        if (profile.email?.toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
-          // Wrong account — revoke immediately and show error
-          google.accounts.oauth2.revoke(accessToken, () => {});
-          accessToken = null;
-          showLoginError('This planner is private. Sign in with the authorised account.');
-          return;
+    function makeTaskRow(num) {
+      const row = document.createElement('div');
+      row.className = 'task-row';
+      row.dataset.taskNum = num;
+
+      const left       = document.createElement('div');
+      left.className   = 'task-left';
+      const numSpan    = document.createElement('span');
+      numSpan.className = 'task-num';
+      numSpan.textContent = num + '.';
+
+      const taskInput       = document.createElement('input');
+      taskInput.className   = 'task-input';
+      taskInput.type        = 'text';
+      taskInput.placeholder = 'Enter task…';
+      taskInput.setAttribute('aria-label', 'Task ' + num);
+      left.append(numSpan, taskInput);
+
+      const controls   = document.createElement('div');
+      controls.className = 'task-controls';
+
+      const bar = document.createElement('div');
+      bar.className = 'session-bar';
+      bar.setAttribute('role', 'group');
+      bar.setAttribute('aria-label', 'Estimated time for task ' + num);
+
+      const levelRef = { value: 0 };
+      const segs = [];
+      for (let i = 1; i <= 5; i++) {
+        const seg = document.createElement('button');
+        seg.className = 'seg';
+        seg.dataset.lvl = i;
+        seg.setAttribute('aria-label', (i * 30) + ' minutes');
+        seg.addEventListener('click', () => {
+          levelRef.value = (levelRef.value === i) ? 0 : i;
+          segs.forEach(s => s.classList.toggle('on', parseInt(s.dataset.lvl) <= levelRef.value));
+          schedulePlannerSave();
+        });
+        bar.appendChild(seg);
+        segs.push(seg);
+      }
+
+      const actualWrap = document.createElement('div');
+      actualWrap.className = 'actual-wrap';
+      const actualInput = document.createElement('input');
+      actualInput.className = 'actual-input';
+      actualInput.type = 'number';
+      actualInput.min = '0'; actualInput.max = '24'; actualInput.step = '0.5';
+      actualInput.placeholder = '—';
+      actualInput.setAttribute('aria-label', 'Actual hours for task ' + num);
+      const actualLabel = document.createElement('span');
+      actualLabel.className = 'actual-label';
+      actualLabel.textContent = 'h';
+      actualWrap.append(actualInput, actualLabel);
+
+      const tick = document.createElement('button');
+      tick.className = 'tick-btn';
+      tick.setAttribute('aria-label', 'Mark task ' + num + ' complete');
+      tick.innerHTML = '<svg class="checkmark" width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      tick.addEventListener('click', () => {
+        const isDone = tick.classList.toggle('done');
+        taskInput.classList.toggle('done', isDone);
+        tick.setAttribute('aria-label', isDone ? 'Mark task ' + num + ' incomplete' : 'Mark task ' + num + ' complete');
+        schedulePlannerSave();
+      });
+
+      taskInput.addEventListener('input', schedulePlannerSave);
+      actualInput.addEventListener('input', schedulePlannerSave);
+
+      controls.append(bar, actualWrap, tick);
+      row.append(left, controls);
+
+      taskInputs[num] = { input: taskInput, segs, levelRef, actualInput, tick };
+      return row;
+    }
+
+    const taskConfigs = [
+      { container: 'mit-tasks',        nums: [1] },
+      { container: 'secondary-tasks',  nums: [2, 3] },
+      { container: 'additional-tasks', nums: [4, 5] },
+    ];
+
+    taskConfigs.forEach(cfg => {
+      const container = document.getElementById(cfg.container);
+      cfg.nums.forEach(n => container.appendChild(makeTaskRow(n)));
+    });
+
+    document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+    document.getElementById('dateInput').addEventListener('change', schedulePlannerSave);
+    document.getElementById('notesArea').addEventListener('input', schedulePlannerSave);
+
+    document.querySelectorAll('.mood-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        schedulePlannerSave();
+      });
+    });
+
+    document.querySelectorAll('.rating-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        schedulePlannerSave();
+      });
+    });
+
+    /* ═══════════════════════════════════════════
+       PLANNER — save / load
+    ═══════════════════════════════════════════ */
+    let plannerSaveTimer = null;
+
+    function schedulePlannerSave() {
+      clearTimeout(plannerSaveTimer);
+      plannerSaveTimer = setTimeout(savePlanner, AUTOSAVE_DELAY);
+    }
+
+    function getPlannerData() {
+      const tasks = {};
+      for (const [num, refs] of Object.entries(taskInputs)) {
+        tasks[num] = {
+          text:   refs.input.value,
+          level:  refs.levelRef.value,
+          actual: refs.actualInput.value,
+          done:   refs.tick.classList.contains('done'),
+        };
+      }
+      const selectedMood   = document.querySelector('.mood-btn.selected');
+      const selectedRating = document.querySelector('.rating-btn.selected');
+      return {
+        date:   document.getElementById('dateInput').value,
+        tasks,
+        notes:  document.getElementById('notesArea').value,
+        mood:   selectedMood   ? selectedMood.dataset.mood     : null,
+        rating: selectedRating ? selectedRating.dataset.rating : null,
+      };
+    }
+
+    function applyPlannerData(data) {
+      if (!data) return;
+      if (data.date) document.getElementById('dateInput').value = data.date;
+      if (data.notes) document.getElementById('notesArea').value = data.notes;
+      if (data.tasks) {
+        for (const [num, t] of Object.entries(data.tasks)) {
+          const refs = taskInputs[num];
+          if (!refs) continue;
+          refs.input.value = t.text || '';
+          refs.levelRef.value = t.level || 0;
+          refs.segs.forEach(s => s.classList.toggle('on', parseInt(s.dataset.lvl) <= (t.level || 0)));
+          refs.actualInput.value = t.actual || '';
+          if (t.done) {
+            refs.tick.classList.add('done');
+            refs.input.classList.add('done');
+          }
+        }
+      }
+      if (data.mood) {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.dataset.mood === String(data.mood)));
+      }
+      if (data.rating) {
+        document.querySelectorAll('.rating-btn').forEach(b => b.classList.toggle('selected', b.dataset.rating === String(data.rating)));
+      }
+    }
+
+    async function savePlanner() {
+      const data = getPlannerData();
+      localStorage.setItem(PLANNER_LS_KEY, JSON.stringify(data));
+      if (accessToken) {
+        setSyncStatus('planner-sync-status', 'Saving…');
+        try {
+          await writeDriveFile(DRIVE_PLANNER, data);
+          setSyncStatus('planner-sync-status', 'Saved ✓');
+          setTimeout(() => setSyncStatus('planner-sync-status', ''), 2000);
+        } catch(e) {
+          setSyncStatus('planner-sync-status', 'Save failed');
+        }
+      }
+    }
+
+    async function loadPlanner() {
+      let data = null;
+      if (accessToken) {
+        setSyncStatus('planner-sync-status', 'Loading…');
+        data = await readDriveFile(DRIVE_PLANNER);
+        setSyncStatus('planner-sync-status', '');
+      }
+      if (!data) {
+        const raw = localStorage.getItem(PLANNER_LS_KEY);
+        if (raw) data = JSON.parse(raw);
+      }
+      applyPlannerData(data);
+    }
+
+    function savePDF() {
+      const date = document.getElementById('dateInput').value;
+      const formatted = date ? new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'planner';
+      document.title = 'Productivity Planner ' + formatted;
+      window.print();
+      document.title = 'Daily Productivity Planner';
+    }
+
+    /* ═══════════════════════════════════════════
+       LONG LIST — data model
+       Items: { id, text, done, order }
+    ═══════════════════════════════════════════ */
+    let llItems = [];       /* all items, sorted by .order */
+    let llSaveTimer = null;
+
+    function scheduleLLSave() {
+      clearTimeout(llSaveTimer);
+      llSaveTimer = setTimeout(saveLongList, AUTOSAVE_DELAY);
+    }
+
+    async function saveLongList() {
+      localStorage.setItem(LL_LS_KEY, JSON.stringify(llItems));
+      if (accessToken) {
+        setSyncStatus('ll-sync-status', 'Saving…');
+        try {
+          await writeDriveFile(DRIVE_LL, llItems);
+          setSyncStatus('ll-sync-status', 'Saved ✓');
+          setTimeout(() => setSyncStatus('ll-sync-status', ''), 2000);
+        } catch(e) {
+          setSyncStatus('ll-sync-status', 'Save failed');
+        }
+      }
+    }
+
+    async function loadLongList() {
+      let data = null;
+      if (accessToken) {
+        setSyncStatus('ll-sync-status', 'Loading…');
+        data = await readDriveFile(DRIVE_LL);
+        setSyncStatus('ll-sync-status', '');
+      }
+      if (!data) {
+        const raw = localStorage.getItem(LL_LS_KEY);
+        if (raw) data = JSON.parse(raw);
+      }
+      if (data && Array.isArray(data)) {
+        llItems = data;
+      }
+      renderLongList();
+    }
+
+    /* ═══════════════════════════════════════════
+       LONG LIST — render
+    ═══════════════════════════════════════════ */
+    function renderLongList() {
+      const todoList = document.getElementById('llList');
+      const doneList = document.getElementById('llDoneList');
+      const emptyMsg = document.getElementById('llEmpty');
+      const countLbl = document.getElementById('llCountLabel');
+      const toggleRow = document.getElementById('llToggleRow');
+      const doneBadge = document.getElementById('llDoneBadge');
+
+      todoList.innerHTML = '';
+      doneList.innerHTML = '';
+
+      const todo = llItems.filter(i => !i.done).sort((a,b) => a.order - b.order);
+      const done = llItems.filter(i =>  i.done).sort((a,b) => a.order - b.order);
+
+      countLbl.textContent = `To do — ${todo.length} item${todo.length !== 1 ? 's' : ''}`;
+      emptyMsg.style.display = todo.length === 0 ? 'block' : 'none';
+
+      todo.forEach(item => todoList.appendChild(makeListItem(item)));
+
+      doneBadge.textContent = `${done.length} done`;
+      toggleRow.style.display = done.length > 0 ? 'flex' : 'none';
+      done.forEach(item => doneList.appendChild(makeListItem(item)));
+    }
+
+    function makeListItem(item) {
+      const li = document.createElement('li');
+      li.className = 'll-item';
+      li.dataset.id = item.id;
+      li.draggable = !item.done;
+
+      const drag = document.createElement('span');
+      drag.className = 'll-drag';
+      drag.setAttribute('aria-hidden', 'true');
+      drag.textContent = '⠿';
+      if (item.done) drag.style.visibility = 'hidden';
+
+      const textEl = document.createElement('input');
+      textEl.type = 'text';
+      textEl.className = 'll-text' + (item.done ? ' done' : '');
+      textEl.value = item.text;
+      textEl.setAttribute('aria-label', 'Action text');
+      textEl.addEventListener('input', () => {
+        const it = llItems.find(i => i.id === item.id);
+        if (it) { it.text = textEl.value; scheduleLLSave(); }
+      });
+
+      const pullBtn = document.createElement('button');
+      pullBtn.className = 'll-pull-btn';
+      pullBtn.textContent = '+ Add to today';
+      pullBtn.setAttribute('aria-label', 'Add to today's planner');
+      pullBtn.addEventListener('click', () => openModal(item));
+      if (item.done) pullBtn.style.display = 'none';
+
+      const tick = document.createElement('button');
+      tick.className = 'll-tick' + (item.done ? ' done' : '');
+      tick.setAttribute('aria-label', item.done ? 'Mark incomplete' : 'Mark complete');
+      tick.innerHTML = '<svg class="checkmark" width="11" height="11" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      tick.addEventListener('click', () => {
+        const it = llItems.find(i => i.id === item.id);
+        if (it) {
+          it.done = !it.done;
+          scheduleLLSave();
+          renderLongList();
+        }
+      });
+
+      li.append(drag, textEl, pullBtn, tick);
+
+      /* drag-and-drop (todo items only) */
+      if (!item.done) {
+        li.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', item.id);
+          li.classList.add('dragging');
+        });
+        li.addEventListener('dragend', () => li.classList.remove('dragging'));
+        li.addEventListener('dragover', e => {
+          e.preventDefault();
+          document.querySelectorAll('.ll-item').forEach(el => el.classList.remove('drag-over'));
+          li.classList.add('drag-over');
+        });
+        li.addEventListener('drop', e => {
+          e.preventDefault();
+          li.classList.remove('drag-over');
+          const draggedId = e.dataTransfer.getData('text/plain');
+          if (draggedId === item.id) return;
+          const draggedIdx = llItems.findIndex(i => i.id === draggedId);
+          const targetIdx  = llItems.findIndex(i => i.id === item.id);
+          if (draggedIdx === -1 || targetIdx === -1) return;
+          const [moved] = llItems.splice(draggedIdx, 1);
+          llItems.splice(targetIdx, 0, moved);
+          llItems.forEach((it, idx) => it.order = idx);
+          scheduleLLSave();
+          renderLongList();
+        });
+      }
+
+      return li;
+    }
+
+    /* add on Enter */
+    document.getElementById('llAddInput').addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      const text = e.target.value.trim();
+      if (!text) return;
+      const maxOrder = llItems.reduce((m, i) => Math.max(m, i.order), -1);
+      llItems.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2), text, done: false, order: maxOrder + 1 });
+      e.target.value = '';
+      scheduleLLSave();
+      renderLongList();
+    });
+
+    /* show/hide done section */
+    function toggleDone() {
+      const section = document.getElementById('llDoneSection');
+      const arrow   = document.getElementById('llToggleArrow');
+      const row     = document.getElementById('llToggleRow');
+      const isOpen  = section.classList.toggle('open');
+      arrow.classList.toggle('open', isOpen);
+      row.setAttribute('aria-expanded', isOpen);
+    }
+
+    /* ═══════════════════════════════════════════
+       SLOT PICKER MODAL
+    ═══════════════════════════════════════════ */
+    let pendingItem = null;
+
+    function openModal(item) {
+      pendingItem = item;
+      document.getElementById('modalPreview').textContent = item.text;
+      const slotsEl = document.getElementById('modalSlots');
+      slotsEl.innerHTML = '';
+
+      SLOTS.forEach(slot => {
+        const container = document.getElementById(slot.container);
+        const inputs    = container.querySelectorAll('.task-input');
+        const emptyInputs = [];
+        inputs.forEach(inp => { if (!inp.value.trim()) emptyInputs.push(inp); });
+
+        const btn = document.createElement('button');
+        btn.className = 'modal-slot-btn';
+
+        if (emptyInputs.length === 0) {
+          btn.disabled = true;
+          btn.style.opacity = '0.45';
+          btn.style.cursor = 'not-allowed';
+          btn.innerHTML = `<span class="modal-slot-label">${slot.label}</span><span class="modal-slot-taken">All slots filled</span>`;
+        } else {
+          const slotNum = emptyInputs[0].getAttribute('aria-label').replace('Task ', '');
+          btn.innerHTML = `<span class="modal-slot-label">${slot.label}</span><span class="modal-slot-name">Slot ${slotNum} — empty</span>`;
+          btn.addEventListener('click', () => {
+            emptyInputs[0].value = item.text;
+            emptyInputs[0].dispatchEvent(new Event('input'));
+            closeModal();
+            showView('planner');
+          });
         }
 
-        // ✓ Correct account — show the app
-        isDriveReady = true;
-        renderUserInfo(profile);
-        showApp();
-        initPlanner();
-        await syncFromDrive();
+        slotsEl.appendChild(btn);
+      });
 
-      } catch(e) {
-        showLoginError('Could not verify your account. Please try again.');
+      document.getElementById('slotModal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('slotModal').classList.remove('open');
+      pendingItem = null;
+    }
+
+    document.getElementById('slotModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ═══════════════════════════════════════════
+       GOOGLE SIGN-IN GATE
+    ═══════════════════════════════════════════ */
+    function initGoogleAuth() {
+      if (typeof google === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
+        loadPlanner();
+        loadLongList();
+        return;
       }
+
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/drive.appdata email profile',
+        callback: async (resp) => {
+          if (resp.error) { loadPlanner(); loadLongList(); return; }
+          /* verify allowed email */
+          const info = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: 'Bearer ' + resp.access_token }
+          }).then(r => r.json());
+          if (info.email !== ALLOWED_EMAIL) {
+            alert('Access denied: ' + info.email);
+            return;
+          }
+          accessToken = resp.access_token;
+          loadPlanner();
+          loadLongList();
+        },
+      });
+      tokenClient.requestAccessToken({ prompt: '' });
     }
-  });
 
-  tokenClient.requestAccessToken();
-}
-
-function renderUserInfo(profile) {
-  $('navEmail').textContent = profile.email || '';
-  if (profile.picture) {
-    const img = $('navAvatar');
-    img.src = profile.picture;
-    img.style.display = 'block';
-  }
-}
-
-function signOut() {
-  if (accessToken) {
-    google.accounts.oauth2.revoke(accessToken, () => {});
-    accessToken = null;
-  }
-  isDriveReady = false;
-  allData = {};
-  showLogin();
-}
-
-// ─────────────────────────────────────────────
-// TAB SWITCHING
-// ─────────────────────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.tab === tab)
-  );
-  $('page-' + tab).classList.add('active');
-  if (tab === 'history') renderHistory();
-}
-
-// ─────────────────────────────────────────────
-// TASK ROWS
-// ─────────────────────────────────────────────
-function makeTaskRow(num, data = {}) {
-  const row = document.createElement('div');
-  row.className = 'task-row';
-
-  const left = document.createElement('div');
-  left.className = 'task-left';
-
-  const numEl = document.createElement('span');
-  numEl.className = 'task-num';
-  numEl.textContent = num + '.';
-
-  const input = document.createElement('input');
-  input.className = 'task-input' + (data.done ? ' done' : '');
-  input.type = 'text';
-  input.placeholder = 'Enter task…';
-  input.value = data.text || '';
-  input.addEventListener('input', scheduleSave);
-  left.append(numEl, input);
-
-  const controls = document.createElement('div');
-  controls.className = 'task-controls';
-
-  const bar = document.createElement('div');
-  bar.className = 'seg-bar';
-  let level = data.est || 0;
-
-  for (let i = 1; i <= 5; i++) {
-    const seg = document.createElement('button');
-    seg.className = 'seg' + (i <= level ? ' on' : '');
-    seg.dataset.lvl = i;
-    seg.setAttribute('aria-label', (i * 30) + ' min');
-    seg.addEventListener('click', () => {
-      level = (level === i) ? 0 : i;
-      bar.querySelectorAll('.seg').forEach(s =>
-        s.classList.toggle('on', +s.dataset.lvl <= level)
-      );
-      scheduleSave();
-    });
-    bar.appendChild(seg);
-  }
-
-  const actWrap = document.createElement('div');
-  actWrap.className = 'actual-wrap';
-  const actInput = document.createElement('input');
-  actInput.className = 'actual-input';
-  actInput.type = 'number';
-  actInput.min = 0; actInput.max = 24; actInput.step = 0.5;
-  actInput.placeholder = '—';
-  actInput.value = data.actual != null ? data.actual : '';
-  actInput.addEventListener('input', scheduleSave);
-  const actLabel = document.createElement('span');
-  actLabel.className = 'actual-label';
-  actLabel.textContent = 'h';
-  actWrap.append(actInput, actLabel);
-
-  const tick = document.createElement('button');
-  tick.className = 'tick-btn' + (data.done ? ' done' : '');
-  tick.innerHTML = `<svg class="ck" width="12" height="12" viewBox="0 0 12 12" fill="none">
-    <polyline points="2,6 5,9 10,3" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>`;
-  tick.addEventListener('click', () => {
-    const done = tick.classList.toggle('done');
-    input.classList.toggle('done', done);
-    scheduleSave();
-  });
-
-  controls.append(bar, actWrap, tick);
-  row.append(left, controls);
-  return row;
-}
-
-function buildTasks(dayData) {
-  SECTIONS.forEach(sec => {
-    const container = $(sec.id);
-    container.innerHTML = '';
-    sec.nums.forEach((n, i) => {
-      const taskData = (dayData?.tasks?.[sec.key] || [])[i] || {};
-      container.appendChild(makeTaskRow(n, taskData));
-    });
-  });
-}
-
-// ─────────────────────────────────────────────
-// READ / WRITE PLANNER STATE
-// ─────────────────────────────────────────────
-function getDateKey() { return $('dateInput').value; }
-
-function readPlanner() {
-  const tasks = {};
-  SECTIONS.forEach(sec => {
-    tasks[sec.key] = sec.nums.map((n, i) => {
-      const row    = $(sec.id).children[i];
-      const input  = row.querySelector('.task-input');
-      const bar    = row.querySelector('.seg-bar');
-      const act    = row.querySelector('.actual-input');
-      const tick   = row.querySelector('.tick-btn');
-      const level  = [...bar.querySelectorAll('.seg')].filter(s => s.classList.contains('on')).length;
-      return {
-        text:   input.value,
-        est:    level,
-        actual: act.value !== '' ? parseFloat(act.value) : null,
-        done:   tick.classList.contains('done'),
-      };
-    });
-  });
-
-  const mood     = document.querySelector('.mood-btn.sel')?.dataset.mood || null;
-  const ratingEl = document.querySelector('.rating-btn.sel');
-  const rating   = ratingEl ? parseInt(ratingEl.dataset.val) : null;
-  const notes    = $('notesArea').value;
-  return { tasks, mood, rating, notes, updated: Date.now() };
-}
-
-function loadIntoPlanner(dayData) {
-  buildTasks(dayData);
-  $('notesArea').value = dayData?.notes || '';
-  document.querySelectorAll('.mood-btn').forEach(b =>
-    b.classList.toggle('sel', b.dataset.mood === dayData?.mood)
-  );
-  document.querySelectorAll('.rating-btn').forEach(b =>
-    b.classList.toggle('sel', +b.dataset.val === dayData?.rating)
-  );
-}
-
-// ─────────────────────────────────────────────
-// AUTOSAVE
-// ─────────────────────────────────────────────
-function scheduleSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(doSave, 800);
-}
-
-async function doSave() {
-  const key = getDateKey();
-  if (!key) return;
-  allData[key] = readPlanner();
-  saveLocal();
-  setSyncStatus('busy', 'Saving…');
-  if (isDriveReady) {
-    try {
-      await saveToDrive();
-      setSyncStatus('ok', 'Synced');
-    } catch(e) {
-      setSyncStatus('err', 'Sync failed');
-    }
-  } else {
-    setSyncStatus('', 'Local only');
-  }
-}
-
-// ─────────────────────────────────────────────
-// LOCAL STORAGE
-// ─────────────────────────────────────────────
-const LS_KEY = 'planner_data_v1';
-function saveLocal() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(allData)); } catch(e) {}
-}
-function loadLocal() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) allData = JSON.parse(raw);
-  } catch(e) {}
-}
-
-// ─────────────────────────────────────────────
-// SYNC STATUS
-// ─────────────────────────────────────────────
-function setSyncStatus(state, label) {
-  $('syncDot').className = 'sync-dot' + (state ? ' ' + state : '');
-  $('syncLabel').textContent = label;
-}
-
-// ─────────────────────────────────────────────
-// GOOGLE DRIVE
-// ─────────────────────────────────────────────
-async function driveRequest(method, path, body, params) {
-  const url = new URL('https://www.googleapis.com' + path);
-  if (params) Object.entries(params).forEach(([k,v]) => url.searchParams.set(k,v));
-  const res = await fetch(url, {
-    method,
-    headers: {
-      'Authorization': 'Bearer ' + accessToken,
-      ...(body ? { 'Content-Type': 'application/json' } : {})
-    },
-    body: body ? JSON.stringify(body) : undefined
-  });
-  if (!res.ok) throw new Error('Drive API ' + res.status);
-  return res.json();
-}
-
-async function findDriveFile() {
-  const data = await driveRequest('GET', '/drive/v3/files', null, {
-    spaces: 'appDataFolder',
-    fields: 'files(id,name)',
-    q: `name='${DRIVE_FILE_NAME}'`
-  });
-  return data.files?.[0]?.id || null;
-}
-
-async function readDriveFile(fileId) {
-  const res = await fetch(
-    `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-    { headers: { 'Authorization': 'Bearer ' + accessToken } }
-  );
-  if (!res.ok) throw new Error('Read failed');
-  return res.json();
-}
-
-async function saveToDrive() {
-  const content = JSON.stringify(allData);
-  if (driveFileId) {
-    const res = await fetch(
-      `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`,
-      {
-        method: 'PATCH',
-        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-        body: content
-      }
-    );
-    if (!res.ok) throw new Error('Update failed');
-  } else {
-    const meta = { name: DRIVE_FILE_NAME, parents: ['appDataFolder'] };
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
-    form.append('file', new Blob([content], { type: 'application/json' }));
-    const res = await fetch(
-      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
-      { method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form }
-    );
-    if (!res.ok) throw new Error('Create failed');
-    driveFileId = (await res.json()).id;
-  }
-}
-
-async function syncFromDrive() {
-  setSyncStatus('busy', 'Syncing…');
-  try {
-    driveFileId = await findDriveFile();
-    if (driveFileId) {
-      const driveData = await readDriveFile(driveFileId);
-      allData = Object.assign({}, allData, driveData);
-      saveLocal();
-      loadIntoPlanner(allData[getDateKey()]);
-      setSyncStatus('ok', 'Synced');
-      toast('Synced from Google Drive');
-    } else {
-      await saveToDrive();
-      setSyncStatus('ok', 'Synced');
-    }
-  } catch(e) {
-    setSyncStatus('err', 'Sync failed');
-    toast('Could not reach Google Drive');
-  }
-}
-
-// ─────────────────────────────────────────────
-// HISTORY
-// ─────────────────────────────────────────────
-function renderHistory() {
-  const q    = $('searchInput').value.toLowerCase().trim();
-  const list = $('historyList');
-  list.innerHTML = '';
-
-  const keys = Object.keys(allData)
-    .filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k))
-    .sort((a,b) => b.localeCompare(a));
-
-  const matches = keys.filter(k => {
-    if (!q) return true;
-    const d = allData[k];
-    const text = [
-      d.notes || '',
-      ...Object.values(d.tasks || {}).flat().map(t => t.text || '')
-    ].join(' ').toLowerCase();
-    return text.includes(q);
-  });
-
-  if (!matches.length) {
-    list.innerHTML = `<div class="empty-state">${q ? `No results for "${q}"` : 'No past planners yet.'}</div>`;
-    return;
-  }
-
-  matches.forEach(k => {
-    const d        = allData[k];
-    const allTasks = Object.values(d.tasks || {}).flat();
-    const total    = allTasks.length;
-    const done     = allTasks.filter(t => t.done).length;
-
-    const card = document.createElement('div');
-    card.className = 'history-card';
-    card.onclick = () => {
-      $('dateInput').value = k;
-      loadIntoPlanner(d);
-      switchTab('today');
-    };
-
-    const dateLabel = new Date(k + 'T00:00:00').toLocaleDateString('en-GB', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-
-    card.innerHTML = `
-      <div class="hc-top">
-        <span class="hc-date">${dateLabel}</span>
-        <div class="hc-meta">
-          ${d.mood   ? `<span class="hc-mood">${d.mood}</span>` : ''}
-          ${d.rating ? `<span class="hc-rating">${d.rating}/5</span>` : ''}
-        </div>
-      </div>
-      <div class="hc-tasks">
-        <span>${done}</span> of ${total} tasks completed
-        ${d.notes ? ' · ' + d.notes.slice(0,60) + (d.notes.length > 60 ? '…' : '') : ''}
-      </div>`;
-    list.appendChild(card);
-  });
-}
-
-// ─────────────────────────────────────────────
-// PDF
-// ─────────────────────────────────────────────
-function savePDF() {
-  const date  = getDateKey();
-  const label = date
-    ? new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
-    : 'planner';
-  document.title = 'Planner ' + label;
-  window.print();
-  document.title = 'Daily Planner';
-}
-
-// ─────────────────────────────────────────────
-// PLANNER INIT (called after successful login)
-// ─────────────────────────────────────────────
-function initPlanner() {
-  const today = new Date().toISOString().split('T')[0];
-  $('dateInput').value = today;
-  $('dateInput').addEventListener('change', () => loadIntoPlanner(allData[getDateKey()] || {}));
-
-  loadLocal();
-  loadIntoPlanner(allData[today] || {});
-
-  document.querySelectorAll('.mood-btn').forEach(btn =>
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
-      btn.classList.add('sel');
-      scheduleSave();
-    })
-  );
-
-  document.querySelectorAll('.rating-btn').forEach(btn =>
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('sel'));
-      btn.classList.add('sel');
-      scheduleSave();
-    })
-  );
-
-  $('notesArea').addEventListener('input', scheduleSave);
-
-  window.addEventListener('beforeunload', () => {
-    const key = getDateKey();
-    if (key) { allData[key] = readPlanner(); saveLocal(); }
-  });
-}
-
-// ─────────────────────────────────────────────
-// BOOT — always show login first
-// ─────────────────────────────────────────────
-showLogin();
-</script>
+    /* load GSI script then init */
+    const gsiScript = document.createElement('script');
+    gsiScript.src = 'https://accounts.google.com/gsi/client';
+    gsiScript.onload = initGoogleAuth;
+    gsiScript.onerror = () => { loadPlanner(); loadLongList(); };
+    document.head.appendChild(gsiScript);
+  </script>
 </body>
 </html>
